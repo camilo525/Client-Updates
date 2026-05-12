@@ -5,7 +5,7 @@ from datetime import datetime
 # --- PAGE CONFIGURATION ---
 st.set_page_config(page_title="VIP Milestone Console", layout="centered")
 
-# --- UI DESIGN ---
+# --- UI DESIGN (VIP DARK MODE) ---
 st.markdown("""
     <style>
     .stApp { background-color: #050505; color: #ffffff; }
@@ -15,22 +15,26 @@ st.markdown("""
         -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         text-align: center; margin-bottom: 30px;
     }
-    div[data-baseweb="input"] { background-color: #111 !important; border: 1px solid #333 !important; }
-    input { color: #00d4ff !important; }
+    div[data-baseweb="input"], div[data-baseweb="textarea"] { 
+        background-color: #111 !important; border: 1px solid #333 !important; 
+    }
+    input, textarea { color: #00d4ff !important; }
     label { color: #888 !important; font-size: 14px !important; }
     </style>
     """, unsafe_allow_html=True)
 
 st.markdown('<div class="main-title">VIP MILESTONE CONSOLE</div>', unsafe_allow_html=True)
 
-# --- ENHANCED AIRPORT DATABASE ---
+# --- AIRPORT DATABASE ---
 AIRPORT_DB = {
     "KTEB": ["Teterboro Airport", "Teterboro", "NJ", "US/Eastern"],
     "KMIA": ["Miami International", "Miami", "FL", "US/Eastern"],
     "KOPF": ["Opa-Locka Executive", "Miami", "FL", "US/Eastern"],
     "KLAX": ["Los Angeles Intl", "Los Angeles", "CA", "US/Pacific"],
     "KLAS": ["Harry Reid Intl", "Las Vegas", "NV", "US/Pacific"],
-    "KASE": ["Aspen/Pitkin County", "Aspen", "CO", "US/Mountain"]
+    "KASE": ["Aspen/Pitkin County", "Aspen", "CO", "US/Mountain"],
+    "MMMX": ["Mexico City Intl", "Mexico City", "MX", "America/Mexico_City"],
+    "EGSS": ["Stansted Airport", "London", "UK", "Europe/London"]
 }
 
 def get_airport_details(icao):
@@ -41,20 +45,16 @@ st.subheader("📍 1. Flight Itinerary & FBO Details")
 col1, col2 = st.columns(2)
 
 with col1:
-    st.markdown("### Departure")
     origin = st.text_input("Departure ICAO", key="org").upper()
     dep_name, dep_city, dep_state, dep_tz = get_airport_details(origin)
-    dep_fbo = st.text_input("Departure FBO", placeholder="e.g. Signature South")
-    dep_time = st.text_input("Local Departure Time", placeholder="e.g. 10:00 AM")
-    if origin: st.caption(f"Timezone: {dep_tz}")
+    dep_fbo = st.text_input("Departure FBO", value="Signature Flight Support")
+    dep_time = st.text_input("Local Departure Time", value="10:00 AM")
 
 with col2:
-    st.markdown("### Arrival")
     destination = st.text_input("Arrival ICAO", key="dst").upper()
     arr_name, arr_city, arr_state, arr_tz = get_airport_details(destination)
-    arr_fbo = st.text_input("Arrival FBO", placeholder="e.g. Jet Aviation")
-    arr_time = st.text_input("Local Arrival Time", placeholder="e.g. 01:30 PM")
-    if destination: st.caption(f"Timezone: {arr_tz}")
+    arr_fbo = st.text_input("Arrival FBO", value="Jet Aviation")
+    arr_time = st.text_input("Local Arrival Time", value="01:30 PM")
 
 # --- 2. MILESTONE SELECTOR ---
 st.markdown("---")
@@ -66,63 +66,75 @@ milestone = st.selectbox("Current Stage", [
     "Flight Active / Taxiing"
 ])
 
+# --- BLOQUE 4: MANUAL WEATHER INPUT ---
+# This appears if we are in Positioning stage to paste info from the other app
+custom_weather = ""
+if milestone == "Positioning Update":
+    st.info("💡 Paste the 'Executive Weather Brief' from the OPS Tool below.")
+    custom_weather = st.text_area("Weather Assessment", placeholder="e.g. Weather conditions are ideal for departure with clear skies...")
+
 # --- 3. VIP NEWSLETTER GENERATOR (HTML) ---
-def generate_newsletter_html(m_stage, d_icao, d_name, d_city, d_fbo, d_time, d_tz, a_icao, a_name, a_city, a_fbo, a_time, a_tz):
-    # Dynamic message logic
+def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_icao, a_city, a_fbo, a_time, a_tz, wx_info):
     if m_stage == "Trip Confirmation":
-        title, msg = "TRIP CONFIRMATION", "Your flight details are confirmed. Please find your updated trip sheet attached."
+        title, msg = "TRIP CONFIRMATION", "Your flight details are confirmed. Please find your updated trip sheet attached for your review."
+        wx_display = ""
     elif m_stage == "Positioning Update":
-        title, msg = "POSITIONING UPDATE", f"The aircraft is currently positioning to {d_city} for your departure."
+        title, msg = "POSITIONING UPDATE", f"The aircraft is currently positioning to {d_city}. Operations are proceeding as scheduled."
+        # Visual box for the weather brief
+        wx_display = f"""<div style='margin-top:15px; padding:12px; background:#f4faff; border-radius:8px; border-left:4px solid #00d4ff;'>
+                            <b style='font-size:12px; color:#005fcc;'>WEATHER ASSESSMENT:</b><br>
+                            <span style='font-size:13px; color:#444;'>{wx_info}</span>
+                         </div>""" if wx_info else ""
     elif m_stage == "Aircraft Ready & FBO Reception":
-        title, msg = "AIRCRAFT READY", f"The aircraft is ready at {d_fbo}. The staff is waiting to assist you with boarding."
+        title, msg = "AIRCRAFT READY", f"The aircraft is fueled and ready at {d_fbo}. The FBO staff is prepared to assist you with boarding."
+        wx_display = ""
     else:
-        title, msg = "FLIGHT ACTIVE", f"The aircraft is taxiing at {d_icao}. Real-time monitoring is active."
+        title, msg = "FLIGHT ACTIVE", f"The aircraft is taxiing at {d_icao}. We are monitoring your flight in real-time until arrival."
+        wx_display = ""
 
     return f"""
     <div style="font-family: Arial, sans-serif; max-width: 500px; border: 1px solid #eee; border-radius: 12px; overflow: hidden; margin: auto; background-color: #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
         <div style="background-color: #000; padding: 20px; text-align: center;">
-            <h2 style="color: #00d4ff; margin: 0; font-size: 16px; letter-spacing: 2px; font-weight: bold;">{title}</h2>
+            <h2 style="color: #00d4ff; margin: 0; font-size: 16px; letter-spacing: 2px;">{title}</h2>
         </div>
         <div style="padding: 25px; color: #333;">
             <div style="text-align: center; margin-bottom: 25px;">
-                <div style="font-size: 24px; font-weight: bold; color: #111;">{d_icao} <span style="color: #00d4ff;">✈</span> {a_icao}</div>
+                <div style="font-size: 26px; font-weight: bold; color: #111;">{d_icao} <span style="color: #00d4ff;">✈</span> {a_icao}</div>
                 <div style="font-size: 12px; color: #888; margin-top: 5px;">{d_city} to {a_city}</div>
             </div>
-            <p style="font-size: 14px; line-height: 1.6; color: #444; background: #f9f9f9; padding: 15px; border-radius: 8px; border-left: 4px solid #00d4ff;">{msg}</p>
-            <table width="100%" style="margin-top: 20px; border-collapse: collapse;">
+            <p style="font-size: 14px; line-height: 1.6; color: #444;">{msg}</p>
+            {wx_display}
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 25px 0;">
+            <table width="100%" style="font-size: 12px; border-collapse: collapse;">
                 <tr>
                     <td style="width: 50%; padding-right: 10px; vertical-align: top;">
-                        <div style="font-size: 11px; color: #00d4ff; font-weight: bold; margin-bottom: 5px;">DEPARTURE</div>
-                        <div style="font-size: 13px; font-weight: bold;">{d_time}</div>
-                        <div style="font-size: 11px; color: #888;">{d_tz}</div>
-                        <div style="font-size: 12px; margin-top: 8px; color: #333;"><b>FBO:</b> {d_fbo}</div>
-                        <div style="font-size: 11px; color: #666;">{d_name}</div>
+                        <div style="color: #00d4ff; font-weight: bold; font-size: 10px; margin-bottom: 5px;">DEPARTURE</div>
+                        <b>{d_time}</b> ({d_tz})<br>
+                        <span style="color:#666;">FBO: {d_fbo}</span>
                     </td>
                     <td style="width: 50%; padding-left: 10px; vertical-align: top; border-left: 1px solid #eee;">
-                        <div style="font-size: 11px; color: #00d4ff; font-weight: bold; margin-bottom: 5px;">ARRIVAL</div>
-                        <div style="font-size: 13px; font-weight: bold;">{a_time}</div>
-                        <div style="font-size: 11px; color: #888;">{a_tz}</div>
-                        <div style="font-size: 12px; margin-top: 8px; color: #333;"><b>FBO:</b> {a_fbo}</div>
-                        <div style="font-size: 11px; color: #666;">{a_name}</div>
+                        <div style="color: #00d4ff; font-weight: bold; font-size: 10px; margin-bottom: 5px;">ARRIVAL</div>
+                        <b>{a_time}</b> ({a_tz})<br>
+                        <span style="color:#666;">FBO: {a_fbo}</span>
                     </td>
                 </tr>
             </table>
         </div>
-        <div style="background-color: #000; padding: 12px; text-align: center; font-size: 10px; color: #555; letter-spacing: 1px;">
-            FLIGHT SUPPORT OPERATIONS | PRIVATE AVIATION
+        <div style="background-color: #000; padding: 12px; text-align: center; font-size: 9px; color: #555; letter-spacing: 1px;">
+            VIP FLIGHT SUPPORT | OPERATIONAL UPDATE
         </div>
     </div>
     """
 
-# --- 4. GENERATE BUTTON ---
+# --- 4. ACTION BUTTON ---
 if st.button("Generate VIP Newsletter"):
     if origin and destination:
         st.markdown("### 📧 Gmail Briefing Preview")
         newsletter = generate_newsletter_html(
-            milestone, origin, dep_name, dep_city, dep_fbo, dep_time, dep_tz,
-            destination, arr_name, arr_city, arr_fbo, arr_time, arr_tz
+            milestone, origin, dep_city, dep_fbo, dep_time, dep_tz, 
+            destination, arr_city, arr_fbo, arr_time, arr_tz, custom_weather
         )
-        st.components.v1.html(newsletter, height=500)
-        st.info("💡 Highlight the card above, copy it, and paste it into your email.")
+        st.components.v1.html(newsletter, height=550)
+        st.info("💡 Highlight the card, copy it, and paste it into your Gmail thread.")
     else:
-        st.error("Please enter both ICAO codes.")
+        st.error("Please enter both Departure and Arrival ICAO.")
