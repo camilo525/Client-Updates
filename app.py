@@ -24,14 +24,71 @@ st.markdown("""
 
 st.markdown('<div class="main-title">VIP MILESTONE CONSOLE</div>', unsafe_allow_html=True)
 
-# --- AIRPORT DATABASE ---
+# --- AIRPORT DATABASE (MASTER LIST) ---
 AIRPORT_DB = {
-    "KTEB": ["Teterboro Airport", "Teterboro", "NJ", "US/Eastern"],
-    "KMIA": ["Miami International", "Miami", "FL", "US/Eastern"],
-    "KOPF": ["Opa-Locka Executive", "Miami", "FL", "US/Eastern"],
-    "KLAX": ["Los Angeles Intl", "Los Angeles", "CA", "US/Pacific"],
+    # NORTHEAST (NY, NJ, MA, PA, DC)
+    "KTEB": ["Teterboro", "Teterboro", "NJ", "US/Eastern"],
+    "KHPN": ["Westchester Co", "White Plains", "NY", "US/Eastern"],
+    "KFRG": ["Republic", "Farmingdale", "NY", "US/Eastern"],
+    "KISP": ["Long Island Mac", "Islip", "NY", "US/Eastern"],
+    "KBOS": ["Logan Intl", "Boston", "MA", "US/Eastern"],
+    "KBED": ["Laurence Hanscom", "Bedford", "MA", "US/Eastern"],
+    "KPHL": ["Philadelphia Intl", "Philadelphia", "PA", "US/Eastern"],
+    "KPNE": ["Northeast Phila", "Philadelphia", "PA", "US/Eastern"],
+    "KIAD": ["Dulles Intl", "Washington", "DC", "US/Eastern"],
+    "KDCA": ["Reagan National", "Washington", "DC", "US/Eastern"],
+    "KHEF": ["Manassas Regional", "Manassas", "VA", "US/Eastern"],
+    # FLORIDA & SOUTHEAST
+    "KOPF": ["Opa-Locka Exec", "Miami", "FL", "US/Eastern"],
+    "KMIA": ["Miami Intl", "Miami", "FL", "US/Eastern"],
+    "KTMB": ["Miami Exec", "Miami", "FL", "US/Eastern"],
+    "KFXE": ["Ft Lauderdale Exec", "Ft Lauderdale", "FL", "US/Eastern"],
+    "KFLL": ["Ft Lauderdale Intl", "Ft Lauderdale", "FL", "US/Eastern"],
+    "KPBI": ["Palm Beach Intl", "West Palm Beach", "FL", "US/Eastern"],
+    "KAPF": ["Naples Municipal", "Naples", "FL", "US/Eastern"],
+    "KORL": ["Orlando Exec", "Orlando", "FL", "US/Eastern"],
+    "KMCO": ["Orlando Intl", "Orlando", "FL", "US/Eastern"],
+    "KTPA": ["Tampa Intl", "Tampa", "FL", "US/Eastern"],
+    "KPDK": ["DeKalb-Peachtree", "Atlanta", "GA", "US/Eastern"],
+    "KATL": ["Hartsfield-Jackson", "Atlanta", "GA", "US/Eastern"],
+    "KCLT": ["Charlotte Douglas", "Charlotte", "NC", "US/Eastern"],
+    # TEXAS & CENTRAL
+    "KDAL": ["Dallas Love Field", "Dallas", "TX", "US/Central"],
+    "KADS": ["Addison", "Dallas", "TX", "US/Central"],
+    "KDFW": ["Dallas/Fort Worth", "Dallas", "TX", "US/Central"],
+    "KHOU": ["William Hobby", "Houston", "TX", "US/Central"],
+    "KIAH": ["Bush Intercontinental", "Houston", "TX", "US/Central"],
+    "KTME": ["Houston Exec", "Houston", "TX", "US/Central"],
+    "KAUS": ["Austin-Bergstrom", "Austin", "TX", "US/Central"],
+    "KORD": ["O'Hare Intl", "Chicago", "IL", "US/Central"],
+    "KMDW": ["Midway Intl", "Chicago", "IL", "US/Central"],
+    "KPWK": ["Chicago Exec", "Wheeling", "IL", "US/Central"],
+    "KMSP": ["Minneapolis-St Paul", "Minneapolis", "MN", "US/Central"],
+    "KMSY": ["Louis Armstrong", "New Orleans", "LA", "US/Central"],
+    # MOUNTAIN (ASPEN, DENVER, VEGAS)
+    "KASE": ["Aspen/Pitkin Co", "Aspen", "CO", "US/Mountain"],
+    "KEGE": ["Eagle County", "Vail", "CO", "US/Mountain"],
+    "KAPA": ["Centennial", "Denver", "CO", "US/Mountain"],
+    "KDEN": ["Denver Intl", "Denver", "CO", "US/Mountain"],
     "KLAS": ["Harry Reid Intl", "Las Vegas", "NV", "US/Pacific"],
-    "KASE": ["Aspen/Pitkin County", "Aspen", "CO", "US/Mountain"]
+    "KVGT": ["North Las Vegas", "Las Vegas", "NV", "US/Pacific"],
+    "KHND": ["Henderson Exec", "Las Vegas", "NV", "US/Pacific"],
+    "KPHX": ["Sky Harbor Intl", "Phoenix", "AZ", "US/Mountain"],
+    "KSDL": ["Scottsdale", "Scottsdale", "AZ", "US/Mountain"],
+    "KSLC": ["Salt Lake City", "Salt Lake City", "UT", "US/Mountain"],
+    # WEST COAST
+    "KVNY": ["Van Nuys", "Los Angeles", "CA", "US/Pacific"],
+    "KLAX": ["Los Angeles Intl", "Los Angeles", "CA", "US/Pacific"],
+    "KBUR": ["Bob Hope/Burbank", "Burbank", "CA", "US/Pacific"],
+    "KSNA": ["John Wayne", "Santa Ana", "CA", "US/Pacific"],
+    "KSAN": ["San Diego Intl", "San Diego", "CA", "US/Pacific"],
+    "KCRQ": ["McClellan-Palomar", "Carlsbad", "CA", "US/Pacific"],
+    "KSFO": ["San Francisco Intl", "San Francisco", "CA", "US/Pacific"],
+    "KOAK": ["Oakland Intl", "Oakland", "CA", "US/Pacific"],
+    "KSJC": ["San Jose Intl", "San Jose", "CA", "US/Pacific"],
+    "KSQL": ["San Carlos", "San Carlos", "CA", "US/Pacific"],
+    "KSEA": ["Seattle-Tacoma", "Seattle", "WA", "US/Pacific"],
+    "KBFI": ["Boeing Field", "Seattle", "WA", "US/Pacific"]
 }
 
 WEATHER_ICONS = {"Sunny": "☼", "Partly Cloudy": "☁", "Cloudy": "☁", "Rainy": "☂", "Thunderstorm": "⚡", "Snowy": "❄", "Foggy": "░"}
