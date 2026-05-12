@@ -47,11 +47,14 @@ with col1:
     _, dep_city, _, dep_tz = get_airport_details(origin)
     dep_fbo = st.text_input("Departure FBO", value="Signature Flight Support")
     dep_time = st.text_input("Departure Time", value="10:00 AM")
+    ramp_dep = st.radio("Dep. Ramp Access", ["Authorized", "Not Authorized"], horizontal=True)
+
 with col2:
     destination = st.text_input("Arrival ICAO", key="dst").upper()
     _, arr_city, _, arr_tz = get_airport_details(destination)
     arr_fbo = st.text_input("Arrival FBO", value="Jet Aviation")
     arr_time = st.text_input("Arrival Time", value="01:30 PM")
+    ramp_arr = st.radio("Arr. Ramp Access", ["Authorized", "Not Authorized"], horizontal=True)
 
 milestone = st.selectbox("Current Milestone", ["Trip Confirmation", "Positioning Update", "Aircraft Ready & FBO Reception", "Flight Active / Taxiing"])
 
@@ -77,21 +80,11 @@ with cs2:
 with cs3:
     s_assist = st.checkbox("Special Assistance")
 
-# --- 4. RAMP ACCESS INFO ---
-st.subheader("🚗 Gate & Ramp Access")
-ramp_status = st.radio(
-    "Plane-side Vehicle Access",
-    ["Authorized", "Not Authorized"],
-    index=0,
-    horizontal=True
-)
-
-# --- 5. GENERATOR FUNCTION ---
-def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, a_icao, a_city, a_fbo, a_time, d_icon, d_msg, a_icon, a_msg, services, ramp):
+# --- 4. GENERATOR FUNCTION ---
+def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, a_icao, a_city, a_fbo, a_time, d_icon, d_msg, a_icon, a_msg, services, r_dep, r_arr):
     BRAND_COLOR = "#cb2d42"
     DARK_BAR = "#282522"
     
-    # Lógica de iconos de servicios
     svc_data = [
         {"label": "PETS", "active": services['pets']},
         {"label": "CATERING", "active": services['catering']},
@@ -108,89 +101,6 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, a_icao, a_c
         svc_html += f'<div style="display:inline-block; margin:5px; width:90px; padding:12px 0; border-radius:8px; background:{bg}; border:{border}; text-align:center;"><div style="font-size:18px; color:{txt}; font-weight:bold;">◈</div><div style="font-size:8px; color:{txt}; font-weight:bold; margin-top:4px; letter-spacing:0.5px;">{item["label"]}</div></div>'
     svc_html += "</div>"
 
-    # Lógica de visualización de Clima
     wx_display = ""
     if m_stage != "Trip Confirmation":
-        wx_display = f"""<div style='margin-top:25px; display: table; width: 100%;'><div style='display: table-cell; width: 48%; padding:20px; background:#fcfcfc; border:1px solid #eee; border-radius:10px; border-top:4px solid {BRAND_COLOR};'><span style='font-size:24px; color:{BRAND_COLOR};'>{d_icon}</span><br><b style='font-size:11px; color:#999; text-transform:uppercase;'>Departure WX</b><br><span style='font-size:13px; color:#333; font-weight:500;'>{d_msg if d_msg else "Visual Conditions"}</span></div><div style='display: table-cell; width: 4%;'></div><div style='display: table-cell; width: 48%; padding:20px; background:#fcfcfc; border:1px solid #eee; border-radius:10px; border-top:4px solid {BRAND_COLOR};'><span style='font-size:24px; color:{BRAND_COLOR};'>{a_icon}</span><br><b style='font-size:11px; color:#999; text-transform:uppercase;'>Arrival WX</b><br><span style='font-size:13px; color:#333; font-weight:500;'>{a_msg if a_msg else "Visual Conditions"}</span></div></div>"""
-
-    # Lógica de RAMP ACCESS
-    ramp_bg = "#fff5f6" if ramp == "Authorized" else "#f9f9f9"
-    ramp_txt = BRAND_COLOR if ramp == "Authorized" else "#666"
-    ramp_icon = "✓" if ramp == "Authorized" else "✕"
-    ramp_msg = f"Plane-side vehicle access is {ramp.lower()}."
-
-    ramp_html = f"""
-    <div style="margin-top:20px; padding:15px; background:{ramp_bg}; border-radius:10px; text-align:center; border:1px dashed {ramp_txt}66;">
-        <span style="color:{ramp_txt}; font-weight:bold; font-size:13px; letter-spacing:0.5px;">
-            <span style="margin-right:8px;">{ramp_icon}</span> {ramp_msg.upper()}
-        </span>
-    </div>
-    """
-
-    msg_map = {
-        "Trip Confirmation": "Confirmation of trip details and operational feasibility.",
-        "Positioning Update": "Aircraft is currently in positioning phase. All schedules are on track.",
-        "Aircraft Ready & FBO Reception": f"Aircraft is ready at {d_fbo}. Ground staff is on standby.",
-        "Flight Active / Taxiing": "Aircraft has commenced taxi operations. Flight tracking is active."
-    }
-
-    return f"""
-    <div style="font-family: Arial, sans-serif; max-width: 550px; border: 2px solid {DARK_BAR}; border-radius: 15px; overflow: hidden; margin: auto; background-color: #ffffff;">
-        <div style="background-color: {DARK_BAR}; padding: 40px 20px; text-align: center;">
-            <h2 style="color: #ffffff; margin: 0; font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 4px;">{m_stage}</h2>
-        </div>
-        <div style="padding: 40px; color: #333;">
-            <div style="text-align: center; margin-bottom: 35px; background: #f9f9f9; padding: 30px; border-radius: 12px;">
-                <span style="font-size: 36px; font-weight: 800; color: #000;">{d_icao}</span>
-                <span style="color: {BRAND_COLOR}; font-size: 28px; margin: 0 20px;">✈</span>
-                <span style="font-size: 36px; font-weight: 800; color: #000;">{a_icao}</span>
-                <div style="font-size: 13px; color: #666; margin-top: 10px; font-weight: 600; text-transform: uppercase;">{d_city} TO {a_city}</div>
-            </div>
-            <p style="font-size: 16px; line-height: 1.6; color: #444; text-align: center;">{msg_map[m_stage]}</p>
-            
-            {wx_display}
-            
-            {ramp_html}
-
-            <div style="margin-top:30px; padding: 25px; border: 1px solid #eee; border-radius: 12px; background: #fafafa;">
-                <div style="text-align:center; font-size:11px; color:#999; letter-spacing:2px; text-transform:uppercase; margin-bottom:10px; font-weight:bold;">Logistics Status</div>
-                {svc_html}
-            </div>
-            <table width="100%" style="margin-top: 40px; border-top: 2px solid #eee; padding-top: 30px;">
-                <tr>
-                    <td style="width: 50%; vertical-align: top; border-right: 2px solid #eee; padding-right: 20px;">
-                        <div style="color: {BRAND_COLOR}; font-weight: 800; font-size: 10px; letter-spacing: 1px; margin-bottom: 8px; text-transform: uppercase;">Departure Info</div>
-                        <b style="font-size: 18px; color: #000;">{d_time}</b><br>
-                        <div style="margin-top: 5px; color: #555; font-size: 13px;">FBO: {d_fbo}</div>
-                    </td>
-                    <td style="width: 50%; vertical-align: top; padding-left: 20px; text-align: right;">
-                        <div style="color: {BRAND_COLOR}; font-weight: 800; font-size: 10px; letter-spacing: 1px; margin-bottom: 8px; text-transform: uppercase;">Arrival Info</div>
-                        <b style="font-size: 18px; color: #000;">{a_time}</b><br>
-                        <div style="margin-top: 5px; color: #555; font-size: 13px;">FBO: {a_fbo}</div>
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <div style="background-color: {DARK_BAR}; padding: 15px; text-align: center; font-size: 11px; color: #ffffff; letter-spacing: 1px;">
-            VIP OPERATIONAL UPDATE | PRIVATE AVIATION
-        </div>
-    </div>
-    """
-
-# --- 6. ACTION BUTTON ---
-st.markdown("---")
-if st.button("Generate Executive Report"):
-    if origin and destination:
-        d_icon = WEATHER_ICONS.get(d_icon_key, "")
-        a_icon = WEATHER_ICONS.get(a_icon_key, "")
-        status = {'pets': s_pets, 'catering': s_catering, 'ground': s_ground, 'rental': s_rental, 'assist': s_assist}
-        
-        newsletter = generate_newsletter_html(
-            milestone, origin, dep_city, dep_fbo, dep_time, 
-            destination, arr_city, arr_fbo, arr_time, 
-            d_icon, dep_wx_msg, a_icon, arr_wx_msg, 
-            status, ramp_status
-        )
-        st.components.v1.html(newsletter, height=1000)
-    else:
-        st.error("Please enter codes first.")
+        wx_display = f"""<div style='margin-top:25px; display: table; width: 100%;'><div style='display: table-cell; width: 48%; padding:20px; background:#fcfcfc; border:1px solid #eee; border-radius:10px; border-top:4px solid {BRAND_COLOR};'><span style='font-size:24px; color:{BRAND_COLOR};'>{d_icon}</span><br><b style='font-size:11px; color:#999; text-transform:uppercase;'>Departure WX</b><br><span style='font-size:13px; color:#
