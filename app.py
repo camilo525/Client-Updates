@@ -50,14 +50,14 @@ with col1:
     _, dep_city, _, dep_tz = get_airport_details(origin)
     dep_fbo = st.text_input("Departure FBO", value="")
     dep_time = st.text_input("Departure Time", value="")
-    ramp_dep = st.radio("Dep. Ramp Access", ["Authorized", "Not Authorized"], horizontal=)
+    ramp_dep = st.radio("Dep. Ramp Access", ["Authorized", "Not Authorized"], horizontal=False)
 
 with col2:
     destination = st.text_input("Arrival ICAO", key="dst").upper()
     _, arr_city, _, arr_tz = get_airport_details(destination)
     arr_fbo = st.text_input("Arrival FBO", value="")
     arr_time = st.text_input("Arrival Time", value="")
-    ramp_arr = st.radio("Arr. Ramp Access", ["Authorized", "Not Authorized"], horizontal=)
+    ramp_arr = st.radio("Arr. Ramp Access", ["Authorized", "Not Authorized"], horizontal=False)
 
 milestone = st.selectbox("Current Milestone", ["Trip Coordination", "Repositioning Update", "FBO Arrival & Boarding Coordination", "Departure & Enroute Monitoring"])
 
