@@ -1,8 +1,6 @@
 import streamlit as st
-import pytz
-from datetime import datetime
 
-# --- CONFIGURACIÓN ---
+# --- CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(page_title="VIP Milestone Console", layout="centered")
 
 # --- UI DESIGN ---
@@ -113,7 +111,7 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_ica
             <div style='display: table-cell; width: 4%;'></div>
             <div style='display: table-cell; width: 48%; padding:12px; background:#fcfcfc; border:1px solid #eee; border-radius:8px; text-align:center;'>
                 <div style='font-size:24px; margin-bottom:5px;'>{a_icon}</div>
-                <b style='font-size:10px; color:#999; text-transform:uppercase;'>Arrival WX</b><br>
+                <b style='font-size:9px; color:#999; text-transform:uppercase;'>Arrival WX</b><br>
                 <span style='font-size:12px; color:#333; font-weight:bold;'>{a_msg}</span>
             </div>
         </div>"""
@@ -125,6 +123,7 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_ica
         "Flight Active / Taxiing": "Aircraft is taxiing. Operational monitoring is live."
     }
 
+    # RETORNO DE HTML (Cierre verificado)
     return f"""
     <div style="font-family: Arial, sans-serif; max-width: 500px; border: 1.5px solid #444; border-radius: 10px; overflow: hidden; margin: auto; background-color: #ffffff;">
         <div style="background-color: #000; padding: 20px 10px; text-align: center;">
@@ -135,4 +134,16 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_ica
                 <span style="font-size: 28px; font-weight: 800; color: #000;">{d_icao}</span>
                 <span style="color: {BRAND_COLOR}; font-size: 22px; margin: 0 10px;">✈</span>
                 <span style="font-size: 28px; font-weight: 800; color: #000;">{a_icao}</span>
-                <div style="
+                <div style="font-size: 11px; color: #666; font-weight: 600;">{d_city} TO {a_city}</div>
+            </div>
+            <p style="font-size: 14px; line-height: 1.4; color: #444; text-align: center; margin-bottom: 10px;">{msg_map[m_stage]}</p>
+            {wx_display}
+            <div style="margin-top:20px; padding: 15px; border: 1px solid #eee; border-radius: 8px; background: #fafafa;">
+                {svc_html}
+            </div>
+            <table width="100%" style="margin-top: 20px; border-top: 1.5px solid #eee; padding-top: 15px;">
+                <tr>
+                    <td style="width: 50%; vertical-align: top; border-right: 1.5px solid #eee; padding-right: 10px;">
+                        <div style="color: {BRAND_COLOR}; font-weight: bold; font-size: 9px; text-transform: uppercase;">Departure</div>
+                        <b style="font-size: 15px; color: #000;">{d_time}</b><br>
+                        <div
