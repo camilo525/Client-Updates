@@ -130,4 +130,24 @@ with cs2:
     s_ground = st.checkbox("Ground Transportation")
     s_rental = st.checkbox("Rental Car")
 with cs3:
-    s_assist = st.checkbox("Special Assistance
+    s_assist = st.checkbox("Special Assistance")
+
+# --- 4. GENERATOR FUNCTION ---
+def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_icao, a_city, a_fbo, a_time, a_tz, d_icon, d_msg, a_icon, a_msg, services, r_dep, r_arr):
+    BRAND_COLOR = "#cb2d42"
+    DARK_BAR = "#282522"
+    
+    svc_data = [
+        {"label": "PETS", "active": services['pets']},
+        {"label": "CATERING", "active": services['catering']},
+        {"label": "GROUND TRANS.", "active": services['ground']},
+        {"label": "RENTAL CAR", "active": services['rental']},
+        {"label": "SPECIAL ASST.", "active": services['assist']}
+    ]
+    
+    svc_items_html = ""
+    for item in svc_data:
+        bg = "#fff5f6" if item['active'] else "#f5f5f5"
+        txt = BRAND_COLOR if item['active'] else "#bbbbbb"
+        border = f"2px solid {BRAND_COLOR}" if item['active'] else f"2px solid {DARK_BAR}22"
+        svc_items_html += f'<div style="display:inline-block; margin:5px; width:90px; padding:12px 0; border-radius:8px; background:{bg}; border:{border}; text-align:center;"><div style="font-size:18px; color:{txt}; font-weight:bold;">
