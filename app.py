@@ -124,7 +124,7 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_ica
     header = f'<div style="background:{DARK_BAR}; padding:35px 20px; text-align:center;"><h2 style="color:#fff; margin:0; font-size:15px; letter-spacing:3px;">{m_stage.upper()}</h2></div>'
     body = f"""<div style="padding:35px; color:#333;">
         <div style="text-align:center; margin-bottom:30px; background:#f9f9f9; padding:25px; border-radius:12px;">
-            <span style="font-size:32px; font-weight:800;">{d_icao}</span> <span style="color:{BRAND_COLOR}; font-size:24px; margin:0 15px;">✈︎</span> <span style="font-size:32px; font-weight:800;">{a_icao}</span>
+            <span style="font-size:32px; font-weight:800;">{d_icao}</span> <span style="color:{BRAND_COLOR}; font-size:24px; margin:0 15px;">〉</span> <span style="font-size:32px; font-weight:800;">{a_icao}</span>
             <div style="font-size:12px; color:#666; margin-top:8px; font-weight:600;">{d_city.upper()} TO {a_city.upper()}</div>
         </div>
         <p style="font-size:15px; line-height:1.5; color:#444; text-align:center;">{msg_map[m_stage]}</p>
