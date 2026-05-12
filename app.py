@@ -112,10 +112,10 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, a_icao, a_c
         return f'<div style="font-size:7px; color:{color}; font-weight:800; margin-top:6px; text-transform:uppercase;">• Plane-side vehicle access: {status}</div>'
 
     msg_map = {
-        "Trip Confirmation": "Confirmation of trip details and operational feasibility.",
-        "Positioning Update": "Aircraft is currently in positioning phase. All schedules are on track.",
-        "Aircraft Ready & FBO Reception": f"Aircraft is ready at {d_fbo}. Ground staff is on standby.",
-        "Flight Active / Taxiing": "Aircraft has commenced taxi operations. Flight tracking is active."
+        "Trip Coordination": "Confirmation of trip details and operational feasibility.",
+        "Repositioning Update": "Aircraft is currently in positioning phase. All schedules are on track.",
+        "FBO Arrival & Boarding Coordination": f"Aircraft is ready at {d_fbo}. Ground staff is on standby.",
+        "Departure & Enroute Monitoring": "Aircraft has commenced taxi operations. Flight tracking is active."
     }
 
     # Construcción final del string
