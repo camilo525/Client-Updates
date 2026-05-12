@@ -128,7 +128,7 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, a_icao, a_c
     # Bloque de retorno HTML
     return f"""
     <div style="font-family: Arial, sans-serif; max-width: 550px; border: 2px solid #333; border-radius: 15px; overflow: hidden; margin: auto; background-color: #ffffff;">
-        <div style="background-color: #000; padding: 40px 20px; text-align: center;">
+        <div style="background-color: ##282522; padding: 40px 20px; text-align: center;">
             <h2 style="color: #ffffff; margin: 0; font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 4px;">{m_stage}</h2>
         </div>
         <div style="padding: 40px; color: #333;">
@@ -154,7 +154,7 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, a_icao, a_c
                     <td style="width: 50%; vertical-align: top; padding-left: 20px; text-align: right;">
                         <div style="color: {BRAND_COLOR}; font-weight: 800; font-size: 10px; letter-spacing: 1px; margin-bottom: 8px; text-transform: uppercase;">Arrival Info</div>
                         <b style="font-size: 18px; color: #000;">{a_time}</b><br>
-                        <div style="margin-top: 5px; color: #555; font-size: 13px;">FBO: {a_fbo}</div>
+                        <div style="margin-top: 5px; color: ##282522; font-size: 13px;">FBO: {a_fbo}</div>
                     </td>
                 </tr>
             </table>
