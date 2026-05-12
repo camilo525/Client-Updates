@@ -130,7 +130,8 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, a_icao, a_c
 <td style="width: 50%; vertical-align: top; border-right: 2px solid #eee; padding-right: 20px;"><div style="color: {BRAND_COLOR}; font-weight: 800; font-size: 10px; text-transform: uppercase;">Departure Info</div><b style="font-size: 18px; color: #000;">{d_time}</b><br><div style="margin-top: 5px; color: #555; font-size: 12px;">FBO: {d_fbo}</div>{ramp_tag(r_dep)}</td>
 <td style="width: 50%; vertical-align: top; padding-left: 20px; text-align: right;"><div style="color: {BRAND_COLOR}; font-weight: 800; font-size: 10px; text-transform: uppercase;">Arrival Info</div><b style="font-size: 18px; color: #000;">{a_time}</b><br><div style="margin-top: 5px; color: #555; font-size: 12px;">FBO: {a_fbo}</div>{ramp_tag(r_arr)}</td>
 </tr></table></div>
-<div style="background-color: {DARK_BAR}; padding: 15px; text-align: center; font-size: 11px; color: #ffffff; letter-spacing: 1px;">VIP OPERATIONAL UPDATE | PRIVATE AVIATION</div>
+<div style="background-color: {DARK_BAR}; padding: 15px; text-align: center; font-size: 11px; color: #ffffff; letter-spacing: 1px;">Should you require any further assistance, please do not hesitate to reach back out to us.
+</div>
 </div>"""
     return html
 
