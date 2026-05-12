@@ -2,10 +2,10 @@ import streamlit as st
 import pytz
 from datetime import datetime
 
-# --- CONFIGURACIÓN DE PÁGINA ---
+# --- PAGE CONFIGURATION ---
 st.set_page_config(page_title="VIP Milestone Console", layout="centered")
 
-# --- DISEÑO DE INTERFAZ (MODO OSCURO) ---
+# --- UI DESIGN ---
 st.markdown("""
     <style>
     .stApp { background-color: #050505; color: #ffffff; }
@@ -25,7 +25,7 @@ st.markdown("""
 
 st.markdown('<div class="main-title">VIP MILESTONE CONSOLE</div>', unsafe_allow_html=True)
 
-# --- BASE DE DATOS DE AEROPUERTOS ---
+# --- AIRPORT DATABASE ---
 AIRPORT_DB = {
     "KTEB": ["Teterboro Airport", "Teterboro", "NJ", "US/Eastern"],
     "KMIA": ["Miami International", "Miami", "FL", "US/Eastern"],
@@ -40,7 +40,7 @@ WEATHER_ICONS = {"Sunny": "☼", "Partly Cloudy": "☁", "Cloudy": "☁", "Rainy
 def get_airport_details(icao):
     return AIRPORT_DB.get(icao, [icao, "Unknown City", "Unknown State", "UTC"])
 
-# --- 1. INPUTS DE ITINERARIO ---
+# --- 1. INPUTS ---
 st.subheader("📍 Flight Itinerary")
 col1, col2 = st.columns(2)
 with col1:
@@ -56,7 +56,7 @@ with col2:
 
 milestone = st.selectbox("Current Milestone", ["Trip Confirmation", "Positioning Update", "Aircraft Ready & FBO Reception", "Flight Active / Taxiing"])
 
-# --- 2. CLIMA Y SERVICIOS ---
+# --- 2. WEATHER & SERVICES ---
 dep_wx_msg, arr_wx_msg = "", ""
 d_icon_key, a_icon_key = "Sunny", "Sunny"
 if milestone == "Positioning Update":
@@ -74,12 +74,11 @@ with cs1: s_catering = st.checkbox("Catering")
 with cs2: s_ground = st.checkbox("Ground Transp.")
 with cs3: s_rental = st.checkbox("Rental Car")
 
-# --- 3. GENERADOR DE NEWSLETTER HTML ---
+# --- 3. GENERATOR ---
 def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_icao, a_city, a_fbo, a_time, a_tz, d_icon, d_msg, a_icon, a_msg, services):
     
     BRAND_COLOR = "#00d4ff"
     
-    # Bloque de Servicios (Corregido)
     svc_data = [
         {"icon": "◈", "label": "CATERING", "active": services['catering']},
         {"icon": "◈", "label": "TRANSPORT", "active": services['ground']},
@@ -107,4 +106,66 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_ica
     wx_display = ""
     if m_stage == "Positioning Update":
         wx_display = f"""
-        <div style='margin-top:15
+        <div style='margin-top:15px; display: table; width: 100%;'>
+            <div style='display: table-cell; width: 48%; padding:12px; background:#fcfcfc; border:1px solid #eee; border-radius:8px;'>
+                <b style='font-size:9px; color:#999; text-transform:uppercase;'>DEP WX</b><br>
+                <span style='font-size:12px; color:#333;'>{d_icon} {d_msg}</span>
+            </div>
+            <div style='display: table-cell; width: 4%;'></div>
+            <div style='display: table-cell; width: 48%; padding:12px; background:#fcfcfc; border:1px solid #eee; border-radius:8px;'>
+                <b style='font-size:9px; color:#999; text-transform:uppercase;'>ARR WX</b><br>
+                <span style='font-size:12px; color:#333;'>{a_icon} {a_msg}</span>
+            </div>
+        </div>"""
+
+    return f"""
+    <div style="font-family: Arial, sans-serif; max-width: 500px; border: 1.5px solid #444; border-radius: 10px; overflow: hidden; margin: auto; background-color: #ffffff;">
+        <div style="background-color: #000; padding: 20px 10px; text-align: center;">
+            <h2 style="color: #ffffff; margin: 0; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px;">{m_stage}</h2>
+        </div>
+        <div style="padding: 25px; color: #333;">
+            <div style="text-align: center; margin-bottom: 20px; background: #f9f9f9; padding: 15px; border-radius: 8px;">
+                <span style="font-size: 28px; font-weight: 800; color: #000;">{d_icao}</span>
+                <span style="color: {BRAND_COLOR}; font-size: 22px; margin: 0 10px;">✈</span>
+                <span style="font-size: 28px; font-weight: 800; color: #000;">{a_icao}</span>
+                <div style="font-size: 11px; color: #666; font-weight: 600;">{d_city} TO {a_city}</div>
+            </div>
+            <p style="font-size: 14px; line-height: 1.4; color: #444; text-align: center; margin: 10px 0;">{msg_map[m_stage]}</p>
+            {wx_display}
+            <div style="margin-top:20px; padding: 15px; border: 1px solid #eee; border-radius: 8px; background: #fafafa;">
+                {svc_html}
+            </div>
+            <table width="100%" style="margin-top: 20px; border-top: 1.5px solid #eee; padding-top: 15px;">
+                <tr>
+                    <td style="width: 50%; vertical-align: top; border-right: 1.5px solid #eee; padding-right: 10px;">
+                        <div style="color: {BRAND_COLOR}; font-weight: bold; font-size: 9px; text-transform: uppercase;">Departure</div>
+                        <b style="font-size: 15px; color: #000;">{d_time}</b><br>
+                        <div style="color: #555; font-size: 11px;">FBO: {d_fbo}</div>
+                    </td>
+                    <td style="width: 50%; vertical-align: top; padding-left: 10px; text-align: right;">
+                        <div style="color: {BRAND_COLOR}; font-weight: bold; font-size: 9px; text-transform: uppercase;">Arrival</div>
+                        <b style="font-size: 15px; color: #000;">{a_time}</b><br>
+                        <div style="color: #555; font-size: 11px;">FBO: {a_fbo}</div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div style="background-color: #222; padding: 10px; text-align: center; font-size: 10px; color: #999; font-weight: 600;">VIP OPERATIONAL UPDATE</div>
+    </div>
+    """
+
+# --- 4. ACTION ---
+if st.button("Generate Final Newsletter"):
+    if origin and destination:
+        d_icon = WEATHER_ICONS.get(d_icon_key, "")
+        a_icon = WEATHER_ICONS.get(a_icon_key, "")
+        services_status = {'catering': s_catering, 'ground': s_ground, 'rental': s_rental}
+        
+        newsletter_html = generate_newsletter_html(
+            milestone, origin, dep_city, dep_fbo, dep_time, dep_tz, 
+            destination, arr_city, arr_fbo, arr_time, arr_tz, 
+            d_icon, dep_wx_msg, a_icon, arr_wx_msg, services_status
+        )
+        st.components.v1.html(newsletter_html, height=750)
+    else:
+        st.error("Please enter codes first.")
