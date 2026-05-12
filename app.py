@@ -23,96 +23,94 @@ st.markdown("""
 
 st.markdown('<div class="main-title">VIP MILESTONE CONSOLE</div>', unsafe_allow_html=True)
 
-# --- ENHANCED AIRPORT DATABASE ---
+# --- AIRPORT DATABASE ---
 AIRPORT_DB = {
     "KTEB": ["Teterboro Airport", "Teterboro", "NJ", "US/Eastern"],
     "KMIA": ["Miami International", "Miami", "FL", "US/Eastern"],
     "KOPF": ["Opa-Locka Executive", "Miami", "FL", "US/Eastern"],
     "KLAX": ["Los Angeles Intl", "Los Angeles", "CA", "US/Pacific"],
     "KLAS": ["Harry Reid Intl", "Las Vegas", "NV", "US/Pacific"],
-    "KASE": ["Aspen/Pitkin County", "Aspen", "CO", "US/Mountain"],
-    "VHHH": ["Hong Kong Intl", "Hong Kong", "HK", "Asia/Hong_Kong"],
-    "EGSS": ["Stansted Airport", "London", "UK", "Europe/London"],
-    "EGLF": ["Farnborough Airport", "Farnborough", "UK", "Europe/London"],
-    "LFPN": ["Toussus-le-Noble", "Paris", "FR", "Europe/Paris"]
+    "KASE": ["Aspen/Pitkin County", "Aspen", "CO", "US/Mountain"]
 }
 
 def get_airport_details(icao):
     return AIRPORT_DB.get(icao, [icao, "Unknown City", "Unknown State", "UTC"])
 
-# --- BLOCK 1: CLEAN DISPATCHER INPUTS ---
+# --- 1. ITINERARY INPUTS ---
 st.subheader("📍 1. Flight Itinerary")
-
 col1, col2 = st.columns(2)
 
 with col1:
-    st.markdown("### Departure")
-    origin = st.text_input("Departure ICAO", placeholder="e.g. KTEB", key="org").upper()
+    origin = st.text_input("Departure ICAO", key="org").upper()
     dep_name, dep_city, dep_state, dep_tz = get_airport_details(origin)
-    
-    # FIX: Only show caption if 'origin' is not empty
-    if origin:
-        if origin in AIRPORT_DB:
-            st.caption(f"✅ **{dep_name}** | {dep_city}, {dep_state}")
-        else:
-            st.caption("ICAO not in database - Defaulting to UTC")
-    
-    dep_time = st.text_input("Local Departure Time", placeholder="e.g. 10:00 AM")
-    if origin: st.caption(f"Timezone: **{dep_tz}**")
+    dep_time = st.text_input("Local Departure Time (e.g. 10:00 AM)")
 
 with col2:
-    st.markdown("### Arrival")
-    destination = st.text_input("Arrival ICAO", placeholder="e.g. KMIA", key="dst").upper()
+    destination = st.text_input("Arrival ICAO", key="dst").upper()
     arr_name, arr_city, arr_state, arr_tz = get_airport_details(destination)
-    
-    # FIX: Only show caption if 'destination' is not empty
-    if destination:
-        if destination in AIRPORT_DB:
-            st.caption(f"✅ **{arr_name}** | {arr_city}, {arr_state}")
-        else:
-            st.caption("ICAO not in database - Defaulting to UTC")
-        
-    arr_time = st.text_input("Local Arrival Time", placeholder="e.g. 02:30 PM")
-    if destination: st.caption(f"Timezone: **{arr_tz}**")
+    arr_time = st.text_input("Local Arrival Time (e.g. 01:30 PM)")
 
+# --- 2. MILESTONE SELECTOR ---
 st.markdown("---")
-
-# --- BLOCK 2: MILESTONE SELECTOR ---
-st.subheader("🗓 2. Select Flight Milestone")
-
+st.subheader("🗓 2. Select Milestone")
 milestone = st.selectbox("Current Stage", [
-    "1. Trip Confirmation (Data Received)",
-    "2. Final Itinerary (Tail & Crew assigned)",
-    "3. Positioning & Weather (Ferry Flight)",
-    "4. Aircraft Ready (FBO Reception)",
-    "5. Pushing Back (Flight Active)"
+    "Trip Confirmation",
+    "Positioning Update",
+    "Aircraft Ready & FBO Reception",
+    "Flight Active / Taxiing"
 ])
 
-st.markdown("---")
-st.subheader("📝 3. Milestone Details")
+fbo_name = ""
+if milestone == "Aircraft Ready & FBO Reception":
+    fbo_name = st.text_input("FBO Name (e.g. Signature Flight Support)")
 
-# Logic to show specific inputs for each milestone
-if "1." in milestone:
-    st.info("Stage 1: Confirmation of data (Pax/Luggage). Weather not required.")
+# --- 3. VIP NEWSLETTER GENERATOR (HTML) ---
+def generate_newsletter_html(m_stage, org_city, dst_city, d_time, a_time, f_name):
+    # Dynamic message based on milestone
+    if m_stage == "Trip Confirmation":
+        title = "TRIP CONFIRMATION"
+        msg = "We have successfully processed your flight details. Your updated trip sheet is attached for your review."
+    elif m_stage == "Positioning Update":
+        title = "POSITIONING UPDATE"
+        msg = f"Your aircraft is currently positioning to {org_city}. Operations are proceeding as scheduled."
+    elif m_stage == "Aircraft Ready & FBO Reception":
+        title = "AIRCRAFT READY"
+        msg = f"The aircraft is fueled and ready at {f_name}. The FBO staff is prepared for your arrival and boarding."
+    else:
+        title = "FLIGHT ACTIVE"
+        msg = f"The aircraft is taxiing at {org_city}. We are monitoring your flight in real-time until arrival at {dst_city}."
 
-elif "2." in milestone:
-    col_tail, col_crew = st.columns(2)
-    with col_tail:
-        tail_number = st.text_input("Tail Number", value="N").upper()
-    with col_crew:
-        crew_names = st.text_input("Crew Names", placeholder="e.g. Capt. Smith & FO Doe")
+    return f"""
+    <div style="font-family: Arial, sans-serif; max-width: 500px; border: 1px solid #eee; border-radius: 12px; overflow: hidden; margin: auto; background-color: #ffffff;">
+        <div style="background-color: #000; padding: 20px; text-align: center;">
+            <h2 style="color: #00d4ff; margin: 0; font-size: 18px; letter-spacing: 2px;">{title}</h2>
+        </div>
+        <div style="padding: 25px; color: #333;">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <span style="font-size: 22px; font-weight: bold;">{org_city}</span> 
+                <span style="color: #00d4ff; font-size: 20px;"> ✈ </span> 
+                <span style="font-size: 22px; font-weight: bold;">{dst_city}</span>
+            </div>
+            <p style="font-size: 14px; line-height: 1.6; color: #666;">{msg}</p>
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+            <table width="100%" style="font-size: 13px;">
+                <tr>
+                    <td><b>Departure:</b> {d_time} (Local)</td>
+                    <td style="text-align: right;"><b>Arrival:</b> {a_time} (Local)</td>
+                </tr>
+            </table>
+        </div>
+        <div style="background-color: #f8f8f8; padding: 10px; text-align: center; font-size: 10px; color: #aaa;">
+            FLIGHT SUPPORT OPERATIONS | VIP SERVICES
+        </div>
+    </div>
+    """
 
-elif "3." in milestone:
-    tail_number = st.text_input("Tail Number", value="N").upper()
-    st.warning("Weather API logic will be integrated in Block 4.")
-
-elif "4." in milestone:
-    tail_number = st.text_input("Tail Number", value="N").upper()
-    fbo_info = st.text_input("FBO Name & Reception Details", placeholder="e.g. Signature Flight Support")
-
-elif "5." in milestone:
-    tail_number = st.text_input("Tail Number", value="N").upper()
-
-# Internal success message
-if origin and destination:
-    st.success(f"Ready for: {milestone}")
+if st.button("Generate VIP Newsletter"):
+    if origin and destination:
+        st.markdown("### 📧 Preview (Copy & Paste to Gmail)")
+        html_code = generate_newsletter_html(milestone, dep_city, arr_city, dep_time, arr_time, fbo_name)
+        st.components.v1.html(html_code, height=450)
+        st.info("💡 **How to send:** Highlight the card above with your mouse, copy it, and paste it directly into your Gmail thread.")
+    else:
+        st.error("Please enter Departure and Arrival ICAO first.")
