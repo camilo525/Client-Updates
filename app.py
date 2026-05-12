@@ -79,51 +79,5 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_ica
     
     BRAND_COLOR = "#00d4ff"
     
-    # Dashboard de Servicios Compacto
     svc_data = [
-        {"icon": "◈", "label": "CATERING", "active": services['catering']},
-        {"icon": "◈", "label": "TRANSPORT", "active": services['ground']},
-        {"icon": "◈", "label": "RENTAL", "active": services['rental']}
-    ]
-    
-    svc_html = "<div style='text-align:center;'>"
-    for item in svc_data:
-        bg = "#f0fbff" if item['active'] else "#f9f9f9"
-        txt = BRAND_COLOR if item['active'] else "#cccccc"
-        svc_html += f"""
-        <div style="display:inline-block; margin:0 5px; width:90px; padding:8px 0; border-radius:6px; background:{bg}; border:1px solid {txt}; text-align:center;">
-            <div style="font-size:16px; color:{txt}; font-weight:bold;">{item['icon']}</div>
-            <div style="font-size:8px; color:{txt}; font-weight:bold; margin-top:2px;">{item['label']}</div>
-        </div>
-        """
-    svc_html += "</div>"
-
-    msg_map = {
-        "Trip Confirmation": "Confirmation of trip details and operational feasibility.",
-        "Positioning Update": "Aircraft is currently in positioning phase.",
-        "Aircraft Ready & FBO Reception": f"Aircraft is ready at {d_fbo}.",
-        "Flight Active / Taxiing": "Aircraft has commenced taxi operations."
-    }
-
-    wx_display = ""
-    if m_stage == "Positioning Update":
-        wx_display = f"""
-        <div style='margin-top:15px; display: table; width: 100%;'>
-            <div style='display: table-cell; width: 48%; padding:12px; background:#fcfcfc; border:1px solid #eee; border-radius:8px;'>
-                <b style='font-size:9px; color:#999; text-transform:uppercase;'>DEP WX</b><br>
-                <span style='font-size:12px; color:#333;'>{d_icon} {d_msg}</span>
-            </div>
-            <div style='display: table-cell; width: 4%;'></div>
-            <div style='display: table-cell; width: 48%; padding:12px; background:#fcfcfc; border:1px solid #eee; border-radius:8px;'>
-                <b style='font-size:9px; color:#999; text-transform:uppercase;'>ARR WX</b><br>
-                <span style='font-size:12px; color:#333;'>{a_icon} {a_msg}</span>
-            </div>
-        </div>"""
-
-    return f"""
-    <div style="font-family: Arial, sans-serif; max-width: 500px; border: 1.5px solid #444; border-radius: 10px; overflow: hidden; margin: auto; background-color: #ffffff;">
-        <div style="background-color: #000; padding: 20px 10px; text-align: center;">
-            <h2 style="color: #ffffff; margin: 0; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px;">{m_stage}</h2>
-        </div>
-        <div style="padding: 25px; color: #333;">
-            <div style="text-align: center; margin-bottom: 20px; background: #f9f9f9; padding: 15
+        {"icon": "◈", "label":
