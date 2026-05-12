@@ -97,4 +97,37 @@ col1, col2 = st.columns(2)
 with col1:
     origin = st.text_input("Departure ICAO", key="org").upper()
     _, dep_city, _, dep_tz = get_airport_details(origin)
-    dep_fbo = st.
+    dep_fbo = st.text_input("Departure FBO", value="Signature Flight Support")
+    dep_time = st.text_input("Departure Time", value="10:00 AM")
+    ramp_dep = st.radio("Dep. Ramp Access", ["Authorized", "Not Authorized"], horizontal=True)
+
+with col2:
+    destination = st.text_input("Arrival ICAO", key="dst").upper()
+    _, arr_city, _, arr_tz = get_airport_details(destination)
+    arr_fbo = st.text_input("Arrival FBO", value="Jet Aviation")
+    arr_time = st.text_input("Arrival Time", value="01:30 PM")
+    ramp_arr = st.radio("Arr. Ramp Access", ["Authorized", "Not Authorized"], horizontal=True)
+
+milestone = st.selectbox("Current Milestone", ["Trip Coordination", "Repositioning Update", "FBO Arrival & Boarding Coordination", "Departure & Enroute Monitoring"])
+
+# --- 2. WEATHER ASSESSMENT ---
+st.subheader("🌫️ Weather Assessment")
+cw1, cw2 = st.columns(2)
+with cw1:
+    d_icon_key = st.selectbox("Dep Weather", list(WEATHER_ICONS.keys()))
+    dep_wx_msg = st.text_input("Dep Brief", placeholder="e.g. Clear Skies")
+with cw2:
+    a_icon_key = st.selectbox("Arr Weather", list(WEATHER_ICONS.keys()))
+    arr_wx_msg = st.text_input("Arr Brief", placeholder="e.g. Standard conditions")
+
+# --- 3. ADDITIONAL SERVICES ---
+st.subheader("⚙️ Additional Services")
+cs1, cs2, cs3 = st.columns(3)
+with cs1: 
+    s_pets = st.checkbox("Pets")
+    s_catering = st.checkbox("Catering")
+with cs2: 
+    s_ground = st.checkbox("Ground Transportation")
+    s_rental = st.checkbox("Rental Car")
+with cs3:
+    s_assist = st.checkbox("Special Assistance
