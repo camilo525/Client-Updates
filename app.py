@@ -91,9 +91,9 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_ica
     # Mensajes
     msg_map = {
         "Trip Coordination": "Hello, Please find attached the updated trip sheet with latest details.",
-        "Repositioning Update": "The aircraft is currently in its repositioning phase. We will provide an update once the aircraft is in position and ready to welcome you on board. <b>We would appreciate a notification once you are approximately 15 minutes from the airport, allowing the FBO staff and flight crew to coordinate your arrival and ensure all preparations are in place</b>.",
+        "Repositioning Update": "The aircraft is currently in its repositioning phase. We will provide an update once the aircraft is in position and ready to welcome you on board. <b>We would appreciate it if you could notify us when you are approximately 15 minutes away from the airport, enabling our crew to prepare for your timely departure.</b>.",
         "FBO Arrival & Boarding Coordination": f"Aircraft is ready at {d_fbo}. The flight crew and FBO staff are standing by to assist with your arrival, check-in, and boarding process.",
-        "Departure & Enroute Monitoring": "We noticed you are ready to depart, and our team will continue monitoring the flight’s progress through active flight following. The Estimated Time Enroute is: XX hrs XX mins."
+        "Departure & Enroute Monitoring": "We noticed you are ready to depart, and our team will continue monitoring the flight’s progress through active flight following. The Estimated Time Enroute is: <b>XX hrs XX mins</b>."
     }
 
     # Servicios
@@ -134,10 +134,10 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_ica
         </div>
         <table width="100%" style="margin-top:30px; border-top:1px solid #eee; padding-top:20px;"><tr>
             <td style="width:50%; vertical-align:top; border-right:1px solid #eee; padding-right:15px;">
-                <b style="color:{BRAND_COLOR}; font-size:10px;">DEPARTURE</b><br><b style="font-size:16px;">{d_time} ({d_tz})</b><br><div style="font-size:12px;">FBO: {d_fbo}</div>{r_tag(r_dep)}
+                <b style="color:{BRAND_COLOR}; font-size:10px;">DEPARTURE</b><br><b style="font-size:16px;">{d_time} ({d_tz})</b><br><div style="font-size:9px;">FBO: {d_fbo}</div>{r_tag(r_dep)}
             </td>
             <td style="width:50%; vertical-align:top; padding-left:15px; text-align:right;">
-                <b style="color:{BRAND_COLOR}; font-size:10px;">ARRIVAL</b><br><b style="font-size:16px;">{a_time} ({a_tz})</b><br><div style="font-size:12px;">FBO: {a_fbo}</div>{r_tag(r_arr)}
+                <b style="color:{BRAND_COLOR}; font-size:10px;">ARRIVAL</b><br><b style="font-size:16px;">{a_time} ({a_tz})</b><br><div style="font-size:9px;">FBO: {a_fbo}</div>{r_tag(r_arr)}
             </td>
         </tr></table></div>"""
     footer = f'<div style="background:{DARK_BAR}; padding:15px; text-align:center; font-size:10px; color:#fff;">VIP OPERATIONAL UPDATE | PRIVATE AVIATION</div>'
