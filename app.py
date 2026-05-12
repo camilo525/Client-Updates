@@ -85,7 +85,6 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, a_icao, a_c
     BRAND_COLOR = "#cb2d42"
     DARK_BAR = "#282522"
     
-    # Dashboard de Servicios
     svc_data = [
         {"label": "PETS", "active": services['pets']},
         {"label": "CATERING", "active": services['catering']},
@@ -102,25 +101,9 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, a_icao, a_c
         svc_html += f'<div style="display:inline-block; margin:5px; width:90px; padding:12px 0; border-radius:8px; background:{bg}; border:{border}; text-align:center;"><div style="font-size:18px; color:{txt}; font-weight:bold;">◈</div><div style="font-size:8px; color:{txt}; font-weight:bold; margin-top:4px; letter-spacing:0.5px;">{item["label"]}</div></div>'
     svc_html += "</div>"
 
-    # Clima (Segmentado para evitar SyntaxError)
     wx_display = ""
     if m_stage != "Trip Confirmation":
-        dep_msg_safe = d_msg if d_msg else "Visual Conditions"
-        arr_msg_safe = a_msg if a_msg else "Visual Conditions"
-        
-        wx_display = f"""<div style='margin-top:25px; display: table; width: 100%;'>
-            <div style='display: table-cell; width: 48%; padding:20px; background:#fcfcfc; border:1px solid #eee; border-radius:10px; border-top:4px solid {BRAND_COLOR};'>
-                <span style='font-size:24px; color:{BRAND_COLOR};'>{d_icon}</span><br>
-                <b style='font-size:11px; color:#999; text-transform:uppercase;'>Departure WX</b><br>
-                <span style='font-size:13px; color:#333; font-weight:500;'>{dep_msg_safe}</span>
-            </div>
-            <div style='display: table-cell; width: 4%;'></div>
-            <div style='display: table-cell; width: 48%; padding:20px; background:#fcfcfc; border:1px solid #eee; border-radius:10px; border-top:4px solid {BRAND_COLOR};'>
-                <span style='font-size:24px; color:{BRAND_COLOR};'>{a_icon}</span><br>
-                <b style='font-size:11px; color:#999; text-transform:uppercase;'>Arrival WX</b><br>
-                <span style='font-size:13px; color:#333; font-weight:500;'>{arr_msg_safe}</span>
-            </div>
-        </div>"""
+        wx_display = f"""<div style='margin-top:25px; display: table; width: 100%;'><div style='display: table-cell; width: 48%; padding:20px; background:#fcfcfc; border:1px solid #eee; border-radius:10px; border-top:4px solid {BRAND_COLOR};'><span style='font-size:24px; color:{BRAND_COLOR};'>{d_icon}</span><br><b style='font-size:11px; color:#999; text-transform:uppercase;'>Departure WX</b><br><span style='font-size:13px; color:#333; font-weight:500;'>{d_msg if d_msg else "Visual Conditions"}</span></div><div style='display: table-cell; width: 4%;'></div><div style='display: table-cell; width: 48%; padding:20px; background:#fcfcfc; border:1px solid #eee; border-radius:10px; border-top:4px solid {BRAND_COLOR};'><span style='font-size:24px; color:{BRAND_COLOR};'>{a_icon}</span><br><b style='font-size:11px; color:#999; text-transform:uppercase;'>Arrival WX</b><br><span style='font-size:13px; color:#333; font-weight:500;'>{a_msg if a_msg else "Visual Conditions"}</span></div></div>"""
 
     def ramp_label(status):
         color = BRAND_COLOR if status == "Authorized" else "#aaaaaa"
@@ -133,21 +116,12 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, a_icao, a_c
         "Flight Active / Taxiing": "Aircraft has commenced taxi operations. Flight tracking is active."
     }
 
-    return f"""
-    <div style="font-family: Arial, sans-serif; max-width: 550px; border: 2px solid {DARK_BAR}; border-radius: 15px; overflow: hidden; margin: auto; background-color: #ffffff;">
-        <div style="background-color: {DARK_BAR}; padding: 40px 20px; text-align: center;">
-            <h2 style="color: #ffffff; margin: 0; font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 4px;">{m_stage}</h2>
-        </div>
-        <div style="padding: 40px; color: #333;">
-            <div style="text-align: center; margin-bottom: 35px; background: #f9f9f9; padding: 30px; border-radius: 12px;">
-                <span style="font-size: 36px; font-weight: 800; color: #000;">{d_icao}</span>
-                <span style="color: {BRAND_COLOR}; font-size: 28px; margin: 0 20px;">✈</span>
-                <span style="font-size: 36px; font-weight: 800; color: #000;">{a_icao}</span>
-                <div style="font-size: 13px; color: #666; margin-top: 10px; font-weight: 600; text-transform: uppercase;">{d_city} TO {a_city}</div>
-            </div>
-            <p style="font-size: 16px; line-height: 1.6; color: #444; text-align: center;">{msg_map[m_stage]}</p>
-            {wx_display}
-            <div style="margin-top:30px; padding: 25px; border: 1px solid #eee; border-radius: 12px; background: #fafafa;">
-                <div style="text-align:center; font-size:11px; color:#999; letter-spacing:2px; text-transform:uppercase; margin-bottom:10px; font-weight:bold;">Logistics Status</div>
-                {svc_html}
-            </div>
+    # BLOQUE DE RETORNO BLINDADO
+    return f"""<div style="font-family: Arial, sans-serif; max-width: 550px; border: 2px solid {DARK_BAR}; border-radius: 15px; overflow: hidden; margin: auto; background-color: #ffffff;">
+<div style="background-color: {DARK_BAR}; padding: 40px 20px; text-align: center;"><h2 style="color: #ffffff; margin: 0; font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 4px;">{m_stage}</h2></div>
+<div style="padding: 40px; color: #333;">
+<div style="text-align: center; margin-bottom: 35px; background: #f9f9f9; padding: 30px; border-radius: 12px;"><span style="font-size: 36px; font-weight: 800; color: #000;">{d_icao}</span><span style="color: {BRAND_COLOR}; font-size: 28px; margin: 0 20px;">✈</span><span style="font-size: 36px; font-weight: 800; color: #000;">{a_icao}</span><div style="font-size: 13px; color: #666; margin-top: 10px; font-weight: 600; text-transform: uppercase;">{d_city} TO {a_city}</div></div>
+<p style="font-size: 16px; line-height: 1.6; color: #444; text-align: center;">{msg_map[m_stage]}</p>
+{wx_display}
+<div style="margin-top:30px; padding: 25px; border: 1px solid #eee; border-radius: 12px; background: #fafafa;"><div style="text-align:center; font-size:11px; color:#999; letter-spacing:2px; text-transform:uppercase; margin-bottom:10px; font-weight:bold;">Logistics Status</div>{svc_html}</div>
+<table width="100%" style="margin-top: 40
