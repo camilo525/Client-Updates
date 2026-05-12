@@ -2,10 +2,10 @@ import streamlit as st
 import pytz
 from datetime import datetime
 
-# --- PAGE CONFIGURATION ---
+# --- CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(page_title="VIP Milestone Console", layout="centered")
 
-# --- UI DESIGN ---
+# --- DISEÑO DE INTERFAZ (MODO OSCURO) ---
 st.markdown("""
     <style>
     .stApp { background-color: #050505; color: #ffffff; }
@@ -25,7 +25,7 @@ st.markdown("""
 
 st.markdown('<div class="main-title">VIP MILESTONE CONSOLE</div>', unsafe_allow_html=True)
 
-# --- AIRPORT DATABASE ---
+# --- BASE DE DATOS DE AEROPUERTOS ---
 AIRPORT_DB = {
     "KTEB": ["Teterboro Airport", "Teterboro", "NJ", "US/Eastern"],
     "KMIA": ["Miami International", "Miami", "FL", "US/Eastern"],
@@ -40,7 +40,7 @@ WEATHER_ICONS = {"Sunny": "☼", "Partly Cloudy": "☁", "Cloudy": "☁", "Rainy
 def get_airport_details(icao):
     return AIRPORT_DB.get(icao, [icao, "Unknown City", "Unknown State", "UTC"])
 
-# --- INPUTS ---
+# --- 1. INPUTS DE ITINERARIO ---
 st.subheader("📍 Flight Itinerary")
 col1, col2 = st.columns(2)
 with col1:
@@ -56,7 +56,7 @@ with col2:
 
 milestone = st.selectbox("Current Milestone", ["Trip Confirmation", "Positioning Update", "Aircraft Ready & FBO Reception", "Flight Active / Taxiing"])
 
-# --- WEATHER & SERVICES ---
+# --- 2. CLIMA Y SERVICIOS ---
 dep_wx_msg, arr_wx_msg = "", ""
 d_icon_key, a_icon_key = "Sunny", "Sunny"
 if milestone == "Positioning Update":
@@ -74,10 +74,37 @@ with cs1: s_catering = st.checkbox("Catering")
 with cs2: s_ground = st.checkbox("Ground Transp.")
 with cs3: s_rental = st.checkbox("Rental Car")
 
-# --- GENERATOR ---
+# --- 3. GENERADOR DE NEWSLETTER HTML ---
 def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_icao, a_city, a_fbo, a_time, a_tz, d_icon, d_msg, a_icon, a_msg, services):
     
     BRAND_COLOR = "#00d4ff"
     
+    # Bloque de Servicios (Corregido)
     svc_data = [
-        {"icon": "◈", "label":
+        {"icon": "◈", "label": "CATERING", "active": services['catering']},
+        {"icon": "◈", "label": "TRANSPORT", "active": services['ground']},
+        {"icon": "◈", "label": "RENTAL", "active": services['rental']}
+    ]
+    
+    svc_html = "<div style='text-align:center;'>"
+    for item in svc_data:
+        bg = "#f0fbff" if item['active'] else "#f9f9f9"
+        txt = BRAND_COLOR if item['active'] else "#cccccc"
+        svc_html += f"""
+        <div style="display:inline-block; margin:0 5px; width:90px; padding:8px 0; border-radius:6px; background:{bg}; border:1px solid {txt}; text-align:center;">
+            <div style="font-size:16px; color:{txt}; font-weight:bold;">{item['icon']}</div>
+            <div style="font-size:8px; color:{txt}; font-weight:bold; margin-top:2px;">{item['label']}</div>
+        </div>"""
+    svc_html += "</div>"
+
+    msg_map = {
+        "Trip Confirmation": "Confirmation of trip details and operational feasibility.",
+        "Positioning Update": "Aircraft is currently in positioning phase.",
+        "Aircraft Ready & FBO Reception": f"Aircraft is ready at {d_fbo}.",
+        "Flight Active / Taxiing": "Aircraft has commenced taxi operations."
+    }
+
+    wx_display = ""
+    if m_stage == "Positioning Update":
+        wx_display = f"""
+        <div style='margin-top:15
