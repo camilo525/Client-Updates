@@ -130,7 +130,7 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_ica
         <p style="font-size:15px; line-height:1.5; color:#444; text-align:center;">{msg_map[m_stage]}</p>
         {wx_html}
         <div style="margin-top:25px; padding:20px; border:1px solid #eee; background:#fafafa; text-align:center;">
-            <div style="font-size:10px; color:#999; letter-spacing:1px; margin-bottom:10px;">LOGISTICS STATUS</div>{svc_items}
+            <div style="font-size:10px; color:#999; letter-spacing:1px; margin-bottom:10px;">Additional Services</div>{svc_items}
         </div>
         <table width="100%" style="margin-top:30px; border-top:1px solid #eee; padding-top:20px;"><tr>
             <td style="width:50%; vertical-align:top; border-right:1px solid #eee; padding-right:15px;">
