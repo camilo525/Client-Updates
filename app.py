@@ -85,4 +85,4 @@ if milestone != "Trip Confirmation":
     st.info("The weather brief will be included in the newsletter for this stage.")
     col_w1, col_w2 = st.columns(2)
     with col_w1:
-        d_icon_key = st.selectbox("Departure Icon", list(WEATHER_ICONS
+        d_icon_key = st.selectbox("Departure Icon", list(WEATHER_ICONS)
