@@ -137,17 +137,41 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_ica
     BRAND_COLOR = "#cb2d42"
     DARK_BAR = "#282522"
     
-    svc_data = [
-        {"label": "PETS", "active": services['pets']},
-        {"label": "CATERING", "active": services['catering']},
-        {"label": "GROUND TRANS.", "active": services['ground']},
-        {"label": "RENTAL CAR", "active": services['rental']},
-        {"label": "SPECIAL ASST.", "active": services['assist']}
+    svc_list = [
+        ("PETS", services['pets']),
+        ("CATERING", services['catering']),
+        ("GROUND TRANS.", services['ground']),
+        ("RENTAL CAR", services['rental']),
+        ("SPECIAL ASST.", services['assist'])
     ]
     
     svc_items_html = ""
-    for item in svc_data:
-        bg = "#fff5f6" if item['active'] else "#f5f5f5"
-        txt = BRAND_COLOR if item['active'] else "#bbbbbb"
-        border = f"2px solid {BRAND_COLOR}" if item['active'] else f"2px solid {DARK_BAR}22"
-        svc_items_html += f'<div style="display:inline-block; margin:5px; width:90px; padding:12px 0; border-radius:8px; background:{bg}; border:{border}; text-align:center;"><div style="font-size:18px; color:{txt}; font-weight:bold;">
+    for label, active in svc_list:
+        bg = "#fff5f6" if active else "#f5f5f5"
+        txt = BRAND_COLOR if active else "#bbbbbb"
+        border = f"2px solid {BRAND_COLOR}" if active else f"2px solid {DARK_BAR}22"
+        # Estilo segmentado para evitar SyntaxError
+        svc_items_html += f'<div style="display:inline-block; margin:5px; width:90px; padding:12px 0; border-radius:8px; background:{bg}; border:{border}; text-align:center;">'
+        svc_items_html += f'<div style="font-size:18px; color:{txt}; font-weight:bold;">◈</div>'
+        svc_items_html += f'<div style="font-size:8px; color:{txt}; font-weight:bold; margin-top:4px; letter-spacing:0.5px;">{label}</div></div>'
+
+    wx_display = ""
+    if m_stage != "Trip Confirmation":
+        wx_display = f"""<div style="margin-top:25px; display: table; width: 100%;">
+<div style="display: table-cell; width: 48%; padding:20px; background:#fcfcfc; border:1px solid #eee; border-radius:10px; border-top:4px solid {BRAND_COLOR};"><span style="font-size:24px; color:{BRAND_COLOR};">{d_icon}</span><br><b style="font-size:11px; color:#999; text-transform:uppercase;">Departure WX</b><br><span style="font-size:13px; color:#333; font-weight:500;">{d_msg if d_msg else "Visual"}</span></div>
+<div style="display: table-cell; width: 4%;"></div>
+<div style="display: table-cell; width: 48%; padding:20px; background:#fcfcfc; border:1px solid #eee; border-radius:10px; border-top:4px solid {BRAND_COLOR};"><span style="font-size:24px; color:{BRAND_COLOR};">{a_icon}</span><br><b style="font-size:11px; color:#999; text-transform:uppercase;">Arrival WX</b><br><span style="font-size:13px; color:#333; font-weight:500;">{a_msg if a_msg else "Visual"}</span></div></div>"""
+
+    def ramp_tag(status):
+        color = BRAND_COLOR if status == "Authorized" else "#aaaaaa"
+        return f'<div style="font-size:8px; color:{color}; font-weight:800; margin-top:6px; text-transform:uppercase;">• Plane-side vehicle access: {status}</div>'
+
+    msg_map = {
+        "Trip Coordination": "Hello, ___________, Please find attached the updated trip sheet reflecting the confirmed revisions and latest trip details.",
+        "Repositioning Update": "The aircraft is currently in its repositioning phase, and all operations are proceeding as planned.",
+        "FBO Arrival & Boarding Coordination": f"Aircraft is ready at {d_fbo}. The flight crew and FBO staff are standing by. <b>Please notify us when you are 15 minutes away.</b>",
+        "Departure & Enroute Monitoring": "The aircraft is preparing for departure. We will continue monitoring the flight’s progress."
+    }
+
+    return f"""<div style="font-family: Arial, sans-serif; max-width: 550px; border: 2px solid {DARK_BAR}; border-radius: 15px; overflow: hidden; margin: auto; background-color: #ffffff;">
+<div style="background-color: {DARK_BAR}; padding: 40px 20px; text-align: center;"><h2 style="color: #ffffff; margin:
