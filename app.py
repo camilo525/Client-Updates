@@ -14,7 +14,7 @@ st.markdown("""
         text-align: center; margin-bottom: 30px;
         letter-spacing: 2px;
     }
-    div[data-baseweb="input"], div[data-baseweb="textarea"], div[data-baseweb="select"], div[data-baseweb="checkbox"] { 
+    div[data-baseweb="input"], div[data-baseweb="textarea"], div[data-baseweb="select"], div[data-baseweb="checkbox"], div[data-baseweb="radio"] { 
         background-color: #111 !important; border: 1px solid #333 !important; 
     }
     input, textarea, select { color: #cb2d42 !important; }
@@ -77,11 +77,21 @@ with cs2:
 with cs3:
     s_assist = st.checkbox("Special Assistance")
 
-# --- 4. GENERATOR FUNCTION ---
-def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, a_icao, a_city, a_fbo, a_time, d_icon, d_msg, a_icon, a_msg, services):
+# --- 4. RAMP ACCESS INFO ---
+st.subheader("🚗 Gate & Ramp Access")
+ramp_status = st.radio(
+    "Plane-side Vehicle Access",
+    ["Authorized", "Not Authorized"],
+    index=0,
+    horizontal=True
+)
+
+# --- 5. GENERATOR FUNCTION ---
+def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, a_icao, a_city, a_fbo, a_time, d_icon, d_msg, a_icon, a_msg, services, ramp):
     BRAND_COLOR = "#cb2d42"
     DARK_BAR = "#282522"
     
+    # Lógica de iconos de servicios
     svc_data = [
         {"label": "PETS", "active": services['pets']},
         {"label": "CATERING", "active": services['catering']},
@@ -98,9 +108,24 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, a_icao, a_c
         svc_html += f'<div style="display:inline-block; margin:5px; width:90px; padding:12px 0; border-radius:8px; background:{bg}; border:{border}; text-align:center;"><div style="font-size:18px; color:{txt}; font-weight:bold;">◈</div><div style="font-size:8px; color:{txt}; font-weight:bold; margin-top:4px; letter-spacing:0.5px;">{item["label"]}</div></div>'
     svc_html += "</div>"
 
+    # Lógica de visualización de Clima
     wx_display = ""
     if m_stage != "Trip Confirmation":
         wx_display = f"""<div style='margin-top:25px; display: table; width: 100%;'><div style='display: table-cell; width: 48%; padding:20px; background:#fcfcfc; border:1px solid #eee; border-radius:10px; border-top:4px solid {BRAND_COLOR};'><span style='font-size:24px; color:{BRAND_COLOR};'>{d_icon}</span><br><b style='font-size:11px; color:#999; text-transform:uppercase;'>Departure WX</b><br><span style='font-size:13px; color:#333; font-weight:500;'>{d_msg if d_msg else "Visual Conditions"}</span></div><div style='display: table-cell; width: 4%;'></div><div style='display: table-cell; width: 48%; padding:20px; background:#fcfcfc; border:1px solid #eee; border-radius:10px; border-top:4px solid {BRAND_COLOR};'><span style='font-size:24px; color:{BRAND_COLOR};'>{a_icon}</span><br><b style='font-size:11px; color:#999; text-transform:uppercase;'>Arrival WX</b><br><span style='font-size:13px; color:#333; font-weight:500;'>{a_msg if a_msg else "Visual Conditions"}</span></div></div>"""
+
+    # Lógica de RAMP ACCESS
+    ramp_bg = "#fff5f6" if ramp == "Authorized" else "#f9f9f9"
+    ramp_txt = BRAND_COLOR if ramp == "Authorized" else "#666"
+    ramp_icon = "✓" if ramp == "Authorized" else "✕"
+    ramp_msg = f"Plane-side vehicle access is {ramp.lower()}."
+
+    ramp_html = f"""
+    <div style="margin-top:20px; padding:15px; background:{ramp_bg}; border-radius:10px; text-align:center; border:1px dashed {ramp_txt}66;">
+        <span style="color:{ramp_txt}; font-weight:bold; font-size:13px; letter-spacing:0.5px;">
+            <span style="margin-right:8px;">{ramp_icon}</span> {ramp_msg.upper()}
+        </span>
+    </div>
+    """
 
     msg_map = {
         "Trip Confirmation": "Confirmation of trip details and operational feasibility.",
@@ -122,7 +147,11 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, a_icao, a_c
                 <div style="font-size: 13px; color: #666; margin-top: 10px; font-weight: 600; text-transform: uppercase;">{d_city} TO {a_city}</div>
             </div>
             <p style="font-size: 16px; line-height: 1.6; color: #444; text-align: center;">{msg_map[m_stage]}</p>
+            
             {wx_display}
+            
+            {ramp_html}
+
             <div style="margin-top:30px; padding: 25px; border: 1px solid #eee; border-radius: 12px; background: #fafafa;">
                 <div style="text-align:center; font-size:11px; color:#999; letter-spacing:2px; text-transform:uppercase; margin-bottom:10px; font-weight:bold;">Logistics Status</div>
                 {svc_html}
@@ -148,14 +177,20 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, a_icao, a_c
     </div>
     """
 
-# --- 5. ACTION BUTTON ---
+# --- 6. ACTION BUTTON ---
 st.markdown("---")
 if st.button("Generate Executive Report"):
     if origin and destination:
         d_icon = WEATHER_ICONS.get(d_icon_key, "")
         a_icon = WEATHER_ICONS.get(a_icon_key, "")
         status = {'pets': s_pets, 'catering': s_catering, 'ground': s_ground, 'rental': s_rental, 'assist': s_assist}
-        newsletter = generate_newsletter_html(milestone, origin, dep_city, dep_fbo, dep_time, destination, arr_city, arr_fbo, arr_time, d_icon, dep_wx_msg, a_icon, arr_wx_msg, status)
+        
+        newsletter = generate_newsletter_html(
+            milestone, origin, dep_city, dep_fbo, dep_time, 
+            destination, arr_city, arr_fbo, arr_time, 
+            d_icon, dep_wx_msg, a_icon, arr_wx_msg, 
+            status, ramp_status
+        )
         st.components.v1.html(newsletter, height=1000)
     else:
         st.error("Please enter codes first.")
