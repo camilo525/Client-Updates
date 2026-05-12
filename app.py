@@ -41,11 +41,96 @@ WEATHER_ICONS = {
 }
 
 def get_airport_details(icao):
+    """Retorna detalles del aeropuerto o valores por defecto para evitar errores."""
     return AIRPORT_DB.get(icao, [icao, "Unknown City", "Unknown State", "UTC"])
 
 # --- 1. ITINERARY & FBO ---
 st.subheader("📍 1. Flight Itinerary")
 col1, col2 = st.columns(2)
+
 with col1:
     origin = st.text_input("Departure ICAO", key="org").upper()
-    _, dep_city, _, dep_tz = get_airport
+    # Función correctamente nombrada
+    _, dep_city, _, dep_tz = get_airport_details(origin)
+    dep_fbo = st.text_input("Departure FBO", value="Signature Flight Support")
+    dep_time = st.text_input("Dep. Time", value="10:00 AM")
+
+with col2:
+    destination = st.text_input("Arrival ICAO", key="dst").upper()
+    # Función correctamente nombrada
+    _, arr_city, _, arr_tz = get_airport_details(destination)
+    arr_fbo = st.text_input("Arrival FBO", value="Jet Aviation")
+    arr_time = st.text_input("Arr. Time", value="01:30 PM")
+
+# --- 2. MILESTONE ---
+st.markdown("---")
+milestone = st.selectbox("Current Milestone", [
+    "Trip Confirmation",
+    "Positioning Update",
+    "Aircraft Ready & FBO Reception",
+    "Flight Active / Taxiing"
+])
+
+# --- 3. WEATHER ASSESSMENT ---
+st.markdown("---")
+st.subheader("🌫️ 2. Weather Assessment")
+cw1, cw2 = st.columns(2)
+with cw1:
+    d_icon_key = st.selectbox("Departure Icon", list(WEATHER_ICONS.keys()))
+    dep_wx_msg = st.text_input("Departure Weather Brief")
+with cw2:
+    a_icon_key = st.selectbox("Arrival Icon", list(WEATHER_ICONS.keys()))
+    arr_wx_msg = st.text_input("Arrival Weather Brief")
+
+# --- 4. ADDITIONAL SERVICES ---
+st.markdown("---")
+st.subheader("⚙️ 3. Additional Services")
+s1, s2, s3 = st.columns(3)
+with s1:
+    pets = st.checkbox("Pets on board")
+    catering = st.checkbox("Catering")
+with s2:
+    ground = st.checkbox("Ground transportation")
+    rental = st.checkbox("Rental")
+with s3:
+    assist = st.checkbox("Special Assistance")
+    cargo = st.checkbox("Special Cargo")
+
+# --- 5. NEWSLETTER GENERATOR ---
+def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_icao, a_city, a_fbo, a_time, a_tz, d_icon, d_msg, a_icon, a_msg, services):
+    BRAND_COLOR = "#00d4ff"
+    
+    svc_items = [
+        ("Pets on board", services['pets']), ("Catering", services['catering']),
+        ("Ground transportation", services['ground']), ("Rental", services['rental']),
+        ("Special Assistance", services['assist']), ("Special Cargo", services['cargo'])
+    ]
+    
+    svc_html = "<div style='text-align:center; margin-top:10px;'>"
+    for label, active in svc_items:
+        color = BRAND_COLOR if active else "#cccccc"
+        opacity = "1" if active else "0.2"
+        border = f"1px solid {BRAND_COLOR}" if active else "1px solid #eeeeee"
+        svc_html += f'<div style="display:inline-block; width:130px; margin:5px; padding:8px 2px; border-radius:4px; border:{border}; opacity:{opacity}; text-align:center;"><div style="font-size:12px; color:{color}; font-weight:bold;">◈</div><div style="font-size:8px; color:{color}; font-weight:bold; text-transform:uppercase; letter-spacing:0.5px;">{label}</div></div>'
+    svc_html += "</div>"
+
+    wx_html = f"""<div style='margin-top:15px; display: table; width: 100%;'><div style='display: table-cell; width: 48%; padding:12px; background:#fcfcfc; border:1px solid #eee; border-radius:8px; text-align:center;'><div style='font-size:20px;'>{d_icon}</div><b style='font-size:9px; color:#999;'>DEPARTURE WX</b><br><span style='font-size:11px; color:#333; font-weight:bold;'>{d_msg if d_msg else "Visual"}</span></div><div style='display: table-cell; width: 4%;'></div><div style='display: table-cell; width: 48%; padding:12px; background:#fcfcfc; border:1px solid #eee; border-radius:8px; text-align:center;'><div style='font-size:20px;'>{a_icon}</div><b style='font-size:9px; color:#999;'>ARRIVAL WX</b><br><span style='font-size:12px; color:#333; font-weight:bold;'>{a_msg if a_msg else "Visual"}</span></div></div>"""
+
+    return f"""
+    <div style="font-family: Arial, sans-serif; max-width: 500px; border: 1.5px solid #444; border-radius: 10px; overflow: hidden; margin: auto; background-color: #ffffff;">
+        <div style="background-color: #000; padding: 20px; text-align: center;"><h2 style="color: #00d4ff; margin: 0; font-size: 14px; text-transform: uppercase; letter-spacing: 2px;">{m_stage}</h2></div>
+        <div style="padding: 25px; color: #333;">
+            <div style="text-align: center; margin-bottom: 20px; background: #f9f9f9; padding: 15px; border-radius: 8px;">
+                <span style="font-size: 28px; font-weight: 800; color: #000;">{d_icao}</span>
+                <span style="color: {BRAND_COLOR}; font-size: 22px; margin: 0 10px;">✈</span>
+                <span style="font-size: 28px; font-weight: 800; color: #000;">{a_icao}</span>
+                <div style="font-size: 11px; color: #666; font-weight: 600;">{d_city} TO {a_city}</div>
+            </div>
+            {wx_html}
+            <div style="margin-top:20px; border-top:1px solid #eee; padding-top:15px;">
+                <div style="text-align:center; font-size:9px; color:#bbb; margin-bottom:10px;">LOGISTICS & SERVICES</div>
+                {svc_html}
+            </div>
+            <table width="100%" style="margin-top: 20px; border-top: 1.5px solid #eee; padding-top: 15px;">
+                <tr>
+                    <td style="width: 50%;"><div style="color: {BRAND_COLOR}; font-weight: bold; font-size: 9px;">DEPARTURE</div><b>{d_time}</b><br><span
