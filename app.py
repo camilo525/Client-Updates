@@ -47,25 +47,24 @@ def get_airport_details(icao):
     return AIRPORT_DB.get(icao, [icao, "Unknown City", "Unknown State", "UTC"])
 
 # --- 1. ITINERARY & FBO INPUTS ---
-st.subheader("📍 1. Flight Itinerary & FBO Details")
+st.subheader("📍 1. Flight Itinerary")
 col1, col2 = st.columns(2)
 
 with col1:
     origin = st.text_input("Departure ICAO", key="org").upper()
     dep_name, dep_city, dep_state, dep_tz = get_airport_details(origin)
     dep_fbo = st.text_input("Departure FBO", value="Signature Flight Support")
-    dep_time = st.text_input("Local Departure Time", value="10:00 AM")
+    dep_time = st.text_input("Departure Time", value="10:00 AM")
 
 with col2:
     destination = st.text_input("Arrival ICAO", key="dst").upper()
     arr_name, arr_city, arr_state, arr_tz = get_airport_details(destination)
     arr_fbo = st.text_input("Arrival FBO", value="Jet Aviation")
-    arr_time = st.text_input("Local Arrival Time", value="01:30 PM")
+    arr_time = st.text_input("Arrival Time", value="01:30 PM")
 
 # --- 2. MILESTONE SELECTOR ---
 st.markdown("---")
-st.subheader("🗓 2. Select Milestone")
-milestone = st.selectbox("Current Stage", [
+milestone = st.selectbox("Current Milestone Stage", [
     "Trip Confirmation",
     "Positioning Update",
     "Aircraft Ready & FBO Reception",
@@ -74,46 +73,3 @@ milestone = st.selectbox("Current Stage", [
 
 # --- 3. WEATHER ASSESSMENT ---
 dep_wx_msg, arr_wx_msg = "", ""
-d_icon_key, a_icon_key = "Sunny", "Sunny"
-
-if milestone == "Positioning Update":
-    st.markdown("---")
-    st.subheader("🌫️ 3. Weather Assessment")
-    col_w1, col_w2 = st.columns(2)
-    with col_w1:
-        d_icon_key = st.selectbox("Departure Icon", list(WEATHER_ICONS.keys()))
-        dep_wx_msg = st.text_input("Departure Brief", placeholder="e.g. Clear skies...")
-    with col_w2:
-        a_icon_key = st.selectbox("Arrival Icon", list(WEATHER_ICONS.keys()))
-        arr_wx_msg = st.text_input("Arrival Brief", placeholder="e.g. Standard conditions...")
-
-# --- 4. ADDITIONAL SERVICES (BUSINESS STYLE) ---
-st.markdown("---")
-st.subheader("⚙️ 4. Additional Services")
-col_s1, col_s2 = st.columns(2)
-with col_s1:
-    s_pets = st.checkbox("Pets on board")
-    s_catering = st.checkbox("Catering")
-    s_ground = st.checkbox("Ground transportation")
-with col_s2:
-    s_rental = st.checkbox("Rental")
-    s_assist = st.checkbox("Special Assistance")
-    s_cargo = st.checkbox("Special Cargo")
-
-# --- 5. VIP NEWSLETTER GENERATOR ---
-def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_icao, a_city, a_fbo, a_time, a_tz, d_icon, d_msg, a_icon, a_msg, services):
-    
-    # Logic for Business Style Services (Diamond Shape)
-    svc_data = [
-        ("Pets on board", services['pets']),
-        ("Catering", services['catering']),
-        ("Ground transportation", services['ground']),
-        ("Rental", services['rental']),
-        ("Special Assistance", services['assist']),
-        ("Special Cargo", services['cargo'])
-    ]
-    
-    svc_html = "<div style='margin-top:15px; text-align:center; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;'>"
-    for label, is_active in svc_data:
-        color = "#00d4ff" if is_active else "#dddddd"
-        opacity = "1" if is
