@@ -89,7 +89,7 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, a_icao, a_c
         {"label": "SPECIAL ASST.", "active": services['assist']}
     ]
     
-    svc_html = "<div style='margin-top:20px; text-align:center;'>"
+    svc_html = "<div style='text-align:center; margin-top:20px;'>"
     for item in svc_data:
         bg = "#fff5f6" if item['active'] else "#f5f5f5"
         txt = BRAND_COLOR if item['active'] else "#bbbbbb"
@@ -143,34 +143,4 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, a_icao, a_c
                 <div style="text-align:center; font-size:11px; color:#999; letter-spacing:2px; text-transform:uppercase; margin-bottom:10px; font-weight:bold;">Logistics Status</div>
                 {svc_html}
             </div>
-            <table width="100%" style="margin-top: 40px; border-top: 2px solid #eee; padding-top: 30px;">
-                <tr>
-                    <td style="width: 50%; vertical-align: top; border-right: 2px solid #eee; padding-right: 20px;">
-                        <div style="color: {BRAND_COLOR}; font-weight: 800; font-size: 10px; letter-spacing: 1px; margin-bottom: 8px; text-transform: uppercase;">Departure Info</div>
-                        <b style="font-size: 18px; color: #000;">{d_time}</b><br>
-                        <div style="margin-top: 5px; color: #555; font-size: 13px;">FBO: {d_fbo}</div>
-                    </td>
-                    <td style="width: 50%; vertical-align: top; padding-left: 20px; text-align: right;">
-                        <div style="color: {BRAND_COLOR}; font-weight: 800; font-size: 10px; letter-spacing: 1px; margin-bottom: 8px; text-transform: uppercase;">Arrival Info</div>
-                        <b style="font-size: 18px; color: #000;">{a_time}</b><br>
-                        <div style="margin-top: 5px; color: #555; font-size: 13px;">FBO: {a_fbo}</div>
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <div style="background-color: #000; padding: 15px; text-align: center; font-size: 11px; color: #ffffff; letter-spacing: 1px;">
-            VIP OPERATIONAL UPDATE | PRIVATE AVIATION
-        </div>
-    </div>
-    """
-
-# --- 5. ACTION BUTTON ---
-st.markdown("---")
-if st.button("Generate Executive Report"):
-    if origin and destination:
-        d_icon = WEATHER_ICONS.get(d_icon_key, "")
-        a_icon = WEATHER_ICONS.get(a_icon_key, "")
-        status = {'pets': s_pets, 'catering': s_catering, 'ground': s_ground, 'rental': s_rental, 'assist': s_assist}
-        newsletter = generate_newsletter_html(milestone, origin, dep_city, dep_fbo, dep_time, destination, arr_city, arr_fbo, arr_time, d_icon, dep_wx_msg, a_icon, arr_wx_msg, status)
-        st.components.v1.html(newsletter, height=1000)
-    else:
+            <table width="100%" style="margin-top: 40px; border-top: 2px solid #eee; padding-top
