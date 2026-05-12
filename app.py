@@ -2,7 +2,7 @@ import streamlit as st
 import pytz
 from datetime import datetime
 
-# --- PAGE CONFIGURATION ---
+# --- CONFIGURACIÓN ---
 st.set_page_config(page_title="VIP Milestone Console", layout="centered")
 
 # --- UI DESIGN ---
@@ -25,7 +25,7 @@ st.markdown("""
 
 st.markdown('<div class="main-title">VIP MILESTONE CONSOLE</div>', unsafe_allow_html=True)
 
-# --- AIRPORT DATABASE ---
+# --- DATABASE ---
 AIRPORT_DB = {
     "KTEB": ["Teterboro Airport", "Teterboro", "NJ", "US/Eastern"],
     "KMIA": ["Miami International", "Miami", "FL", "US/Eastern"],
@@ -35,12 +35,20 @@ AIRPORT_DB = {
     "KASE": ["Aspen/Pitkin County", "Aspen", "CO", "US/Mountain"]
 }
 
-WEATHER_ICONS = {"Sunny": "☼", "Partly Cloudy": "☁", "Cloudy": "☁", "Rainy": "☂", "Thunderstorm": "⚡", "Snowy": "❄", "Foggy": "░"}
+WEATHER_ICONS = {
+    "Sunny": "☀️", 
+    "Partly Cloudy": "⛅", 
+    "Cloudy": "☁️", 
+    "Rainy": "🌧️", 
+    "Thunderstorm": "⛈️", 
+    "Snowy": "❄️", 
+    "Foggy": "🌫️"
+}
 
 def get_airport_details(icao):
     return AIRPORT_DB.get(icao, [icao, "Unknown City", "Unknown State", "UTC"])
 
-# --- 1. INPUTS ---
+# --- INPUTS ---
 st.subheader("📍 Flight Itinerary")
 col1, col2 = st.columns(2)
 with col1:
@@ -56,29 +64,32 @@ with col2:
 
 milestone = st.selectbox("Current Milestone", ["Trip Confirmation", "Positioning Update", "Aircraft Ready & FBO Reception", "Flight Active / Taxiing"])
 
-# --- 2. WEATHER & SERVICES ---
+# --- WEATHER & SERVICES ---
 dep_wx_msg, arr_wx_msg = "", ""
 d_icon_key, a_icon_key = "Sunny", "Sunny"
+
 if milestone == "Positioning Update":
+    st.info("Select weather icons and add brief comments.")
     c_w1, c_w2 = st.columns(2)
     with c_w1:
-        d_icon_key = st.selectbox("Dep Weather", list(WEATHER_ICONS.keys()))
-        dep_wx_msg = st.text_input("Dep Brief")
+        d_icon_key = st.selectbox("Dep Weather Icon", list(WEATHER_ICONS.keys()))
+        dep_wx_msg = st.text_input("Dep Weather Brief")
     with c_w2:
-        a_icon_key = st.selectbox("Arr Weather", list(WEATHER_ICONS.keys()))
-        arr_wx_msg = st.text_input("Arr Brief")
+        a_icon_key = st.selectbox("Arr Weather Icon", list(WEATHER_ICONS.keys()))
+        arr_wx_msg = st.text_input("Arr Weather Brief")
 
 st.subheader("⚙️ Ground & Concierge")
 cs1, cs2, cs3 = st.columns(3)
-with cs1: s_catering = st.checkbox("Catering")
+with cs1: s_catering = st.checkbox("Catering Ready")
 with cs2: s_ground = st.checkbox("Ground Transp.")
 with cs3: s_rental = st.checkbox("Rental Car")
 
-# --- 3. GENERATOR ---
+# --- GENERATOR ---
 def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_icao, a_city, a_fbo, a_time, a_tz, d_icon, d_msg, a_icon, a_msg, services):
     
     BRAND_COLOR = "#00d4ff"
     
+    # Dashboard de Servicios
     svc_data = [
         {"icon": "◈", "label": "CATERING", "active": services['catering']},
         {"icon": "◈", "label": "TRANSPORT", "active": services['ground']},
@@ -96,27 +107,31 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_ica
         </div>"""
     svc_html += "</div>"
 
-    msg_map = {
-        "Trip Confirmation": "Confirmation of trip details and operational feasibility.",
-        "Positioning Update": "Aircraft is currently in positioning phase.",
-        "Aircraft Ready & FBO Reception": f"Aircraft is ready at {d_fbo}.",
-        "Flight Active / Taxiing": "Aircraft has commenced taxi operations."
-    }
-
+    # Bloque de Clima con Logos Bien Puestos
     wx_display = ""
     if m_stage == "Positioning Update":
         wx_display = f"""
-        <div style='margin-top:15px; display: table; width: 100%;'>
-            <div style='display: table-cell; width: 48%; padding:12px; background:#fcfcfc; border:1px solid #eee; border-radius:8px;'>
-                <b style='font-size:9px; color:#999; text-transform:uppercase;'>DEP WX</b><br>
-                <span style='font-size:12px; color:#333;'>{d_icon} {d_msg}</span>
+        <div style='margin-top:15px; display: table; width: 100%; border-collapse: separate;'>
+            <div style='display: table-cell; width: 48%; padding:12px; background:#fcfcfc; border:1px solid #eee; border-radius:8px; text-align:center; vertical-align:middle;'>
+                <div style='font-size:24px; margin-bottom:5px;'>{d_icon}</div>
+                <b style='font-size:9px; color:#999; text-transform:uppercase;'>Departure WX</b><br>
+                <span style='font-size:12px; color:#333; font-weight:bold;'>{d_msg}</span>
             </div>
             <div style='display: table-cell; width: 4%;'></div>
-            <div style='display: table-cell; width: 48%; padding:12px; background:#fcfcfc; border:1px solid #eee; border-radius:8px;'>
-                <b style='font-size:9px; color:#999; text-transform:uppercase;'>ARR WX</b><br>
-                <span style='font-size:12px; color:#333;'>{a_icon} {a_msg}</span>
+            <div style='display: table-cell; width: 48%; padding:12px; background:#fcfcfc; border:1px solid #eee; border-radius:8px; text-align:center; vertical-align:middle;'>
+                <div style='font-size:24px; margin-bottom:5px;'>{a_icon}</div>
+                <b style='font-size:9px; color:#999; text-transform:uppercase;'>Arrival WX</b><br>
+                <span style='font-size:12px; color:#333; font-weight:bold;'>{a_msg}</span>
             </div>
         </div>"""
+
+    # Itinerario Base
+    msg_map = {
+        "Trip Confirmation": "Flight details are confirmed for your upcoming mission.",
+        "Positioning Update": "The aircraft is currently in the positioning phase.",
+        "Aircraft Ready & FBO Reception": f"Aircraft is ready at {d_fbo}. Ground staff prepared.",
+        "Flight Active / Taxiing": "Aircraft is taxiing. Operational monitoring is live."
+    }
 
     return f"""
     <div style="font-family: Arial, sans-serif; max-width: 500px; border: 1.5px solid #444; border-radius: 10px; overflow: hidden; margin: auto; background-color: #ffffff;">
@@ -130,42 +145,7 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_ica
                 <span style="font-size: 28px; font-weight: 800; color: #000;">{a_icao}</span>
                 <div style="font-size: 11px; color: #666; font-weight: 600;">{d_city} TO {a_city}</div>
             </div>
-            <p style="font-size: 14px; line-height: 1.4; color: #444; text-align: center; margin: 10px 0;">{msg_map[m_stage]}</p>
+            <p style="font-size: 14px; line-height: 1.4; color: #444; text-align: center; margin-bottom: 10px;">{msg_map[m_stage]}</p>
             {wx_display}
             <div style="margin-top:20px; padding: 15px; border: 1px solid #eee; border-radius: 8px; background: #fafafa;">
-                {svc_html}
-            </div>
-            <table width="100%" style="margin-top: 20px; border-top: 1.5px solid #eee; padding-top: 15px;">
-                <tr>
-                    <td style="width: 50%; vertical-align: top; border-right: 1.5px solid #eee; padding-right: 10px;">
-                        <div style="color: {BRAND_COLOR}; font-weight: bold; font-size: 9px; text-transform: uppercase;">Departure</div>
-                        <b style="font-size: 15px; color: #000;">{d_time}</b><br>
-                        <div style="color: #555; font-size: 11px;">FBO: {d_fbo}</div>
-                    </td>
-                    <td style="width: 50%; vertical-align: top; padding-left: 10px; text-align: right;">
-                        <div style="color: {BRAND_COLOR}; font-weight: bold; font-size: 9px; text-transform: uppercase;">Arrival</div>
-                        <b style="font-size: 15px; color: #000;">{a_time}</b><br>
-                        <div style="color: #555; font-size: 11px;">FBO: {a_fbo}</div>
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <div style="background-color: #222; padding: 10px; text-align: center; font-size: 10px; color: #999; font-weight: 600;">VIP OPERATIONAL UPDATE</div>
-    </div>
-    """
-
-# --- 4. ACTION ---
-if st.button("Generate Final Newsletter"):
-    if origin and destination:
-        d_icon = WEATHER_ICONS.get(d_icon_key, "")
-        a_icon = WEATHER_ICONS.get(a_icon_key, "")
-        services_status = {'catering': s_catering, 'ground': s_ground, 'rental': s_rental}
-        
-        newsletter_html = generate_newsletter_html(
-            milestone, origin, dep_city, dep_fbo, dep_time, dep_tz, 
-            destination, arr_city, arr_fbo, arr_time, arr_tz, 
-            d_icon, dep_wx_msg, a_icon, arr_wx_msg, services_status
-        )
-        st.components.v1.html(newsletter_html, height=750)
-    else:
-        st.error("Please enter codes first.")
+                <div style="text-align:center; font-
