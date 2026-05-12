@@ -87,114 +87,33 @@ if milestone == "Positioning Update":
         a_icon_key = st.selectbox("Arrival Icon", list(WEATHER_ICONS.keys()))
         arr_wx_msg = st.text_input("Arrival Brief", placeholder="e.g. Standard conditions...")
 
-# --- 4. ADDITIONAL SERVICES (UPDATED) ---
+# --- 4. ADDITIONAL SERVICES (BUSINESS STYLE) ---
 st.markdown("---")
-st.subheader("➕ 4. Additional Services")
-col_s1, col_s2, col_s3 = st.columns(3)
+st.subheader("⚙️ 4. Additional Services")
+col_s1, col_s2 = st.columns(2)
 with col_s1:
-    s_catering = st.checkbox("Catering Ready")
+    s_pets = st.checkbox("Pets on board")
+    s_catering = st.checkbox("Catering")
+    s_ground = st.checkbox("Ground transportation")
 with col_s2:
-    s_ground = st.checkbox("Ground Transportation")
-with col_s3:
-    s_rental = st.checkbox("Rental Car")
+    s_rental = st.checkbox("Rental")
+    s_assist = st.checkbox("Special Assistance")
+    s_cargo = st.checkbox("Special Cargo")
 
 # --- 5. VIP NEWSLETTER GENERATOR ---
 def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_icao, a_city, a_fbo, a_time, a_tz, d_icon, d_msg, a_icon, a_msg, services):
     
-    # Logic for Services Icons
-    # Icons: Catering (🍽️), Ground Transportation (👨‍✈️), Rental Car (🚗)
-    svc_list = [
-        ("🍽️", services['catering']),
-        ("👨‍✈️", services['ground']),
-        ("🚗", services['rental'])
+    # Logic for Business Style Services (Diamond Shape)
+    svc_data = [
+        ("Pets on board", services['pets']),
+        ("Catering", services['catering']),
+        ("Ground transportation", services['ground']),
+        ("Rental", services['rental']),
+        ("Special Assistance", services['assist']),
+        ("Special Cargo", services['cargo'])
     ]
     
-    svc_html = "<div style='margin-top:15px; text-align:center;'>"
-    for icon, is_active in svc_list:
-        # If active, bright blue. If not, very faded gray
-        color = "#00d4ff" if is_active else "#cccccc"
-        opacity = "1" if is_active else "0.15"
-        svc_html += f"<span style='font-size:28px; margin:0 20px; color:{color}; opacity:{opacity};'>{icon}</span>"
-    svc_html += "</div>"
-
-    if m_stage == "Trip Confirmation":
-        title, msg = "TRIP CONFIRMATION", "Your flight details are confirmed. Please find your updated trip sheet attached."
-        wx_display = ""
-    elif m_stage == "Positioning Update":
-        title, msg = "POSITIONING UPDATE", f"The aircraft is currently positioning. Operations are proceeding as scheduled."
-        wx_display = f"""<div style='margin-top:20px; display: table; width: 100%;'>
-                            <div style='display: table-cell; width: 48%; padding:15px; background:#f4faff; border-radius:8px; border-left:4px solid #00d4ff;'>
-                                <span style='font-size:24px;'>{d_icon}</span><br>
-                                <b style='font-size:12px; color:#005fcc;'>DEPARTURE:</b><br>
-                                <span style='font-size:13px; color:#444;'>{d_msg}</span>
-                            </div>
-                            <div style='display: table-cell; width: 4%;'></div>
-                            <div style='display: table-cell; width: 48%; padding:15px; background:#f4faff; border-radius:8px; border-left:4px solid #00d4ff;'>
-                                <span style='font-size:24px;'>{a_icon}</span><br>
-                                <b style='font-size:12px; color:#005fcc;'>ARRIVAL:</b><br>
-                                <span style='font-size:13px; color:#444;'>{a_msg}</span>
-                            </div>
-                         </div>"""
-    else:
-        title, msg = "FLIGHT STATUS", f"Operational update for your flight from {d_icao} to {a_icao}."
-        wx_display = ""
-
-    return f"""
-    <div style="font-family: Arial, sans-serif; max-width: 500px; border: 1px solid #eee; border-radius: 12px; overflow: hidden; margin: auto; background-color: #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
-        <div style="background-color: #000; padding: 20px; text-align: center;">
-            <h2 style="color: #00d4ff; margin: 0; font-size: 16px; letter-spacing: 2px;">{title}</h2>
-        </div>
-        <div style="padding: 25px; color: #333;">
-            <div style="text-align: center; margin-bottom: 25px;">
-                <div style="font-size: 26px; font-weight: bold; color: #111;">{d_icao} <span style="color: #00d4ff;">✈</span> {a_icao}</div>
-                <div style="font-size: 12px; color: #888; margin-top: 5px;">{d_city} to {a_city}</div>
-            </div>
-            <p style="font-size: 14px; line-height: 1.6; color: #444;">{msg}</p>
-            {wx_display}
-            <div style="border-top:1px solid #eee; margin-top:20px; padding-top:10px;">
-                <div style="text-align:center; font-size:10px; color:#888; letter-spacing:1px; margin-bottom:10px;">ADDITIONAL SERVICES</div>
-                {svc_html}
-            </div>
-            <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
-            <table width="100%" style="font-size: 12px; border-collapse: collapse;">
-                <tr>
-                    <td style="width: 50%; padding-right: 10px; vertical-align: top;">
-                        <div style="color: #00d4ff; font-weight: bold; font-size: 10px; margin-bottom: 5px;">DEPARTURE</div>
-                        <b>{d_time}</b> ({d_tz})<br>
-                        <span style="color:#666;">FBO: {d_fbo}</span>
-                    </td>
-                    <td style="width: 50%; padding-left: 10px; vertical-align: top; border-left: 1px solid #eee;">
-                        <div style="color: #00d4ff; font-weight: bold; font-size: 10px; margin-bottom: 5px;">ARRIVAL</div>
-                        <b>{a_time}</b> ({a_tz})<br>
-                        <span style="color:#666;">FBO: {a_fbo}</span>
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <div style="background-color: #000; padding: 12px; text-align: center; font-size: 9px; color: #555; letter-spacing: 1px;">
-            VIP FLIGHT SUPPORT | OPERATIONAL UPDATE
-        </div>
-    </div>
-    """
-
-# --- 6. ACTION ---
-if st.button("Generate VIP Newsletter"):
-    if origin and destination:
-        st.markdown("### 📧 Gmail Briefing Preview")
-        d_icon = WEATHER_ICONS.get(d_icon_key, "")
-        a_icon = WEATHER_ICONS.get(a_icon_key, "")
-        
-        services_status = {
-            'catering': s_catering, 
-            'ground': s_ground, 
-            'rental': s_rental
-        }
-        
-        newsletter = generate_newsletter_html(
-            milestone, origin, dep_city, dep_fbo, dep_time, dep_tz, 
-            destination, arr_city, arr_fbo, arr_time, arr_tz,
-            d_icon, dep_wx_msg, a_icon, arr_wx_msg, services_status
-        )
-        st.components.v1.html(newsletter, height=750)
-    else:
-        st.error("Please enter both Departure and Arrival ICAO.")
+    svc_html = "<div style='margin-top:15px; text-align:center; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;'>"
+    for label, is_active in svc_data:
+        color = "#00d4ff" if is_active else "#dddddd"
+        opacity = "1" if is
