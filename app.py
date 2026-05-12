@@ -70,10 +70,10 @@ st.subheader("🌫️ 3. Weather Assessment")
 col_w1, col_w2 = st.columns(2)
 with col_w1:
     d_icon_key = st.selectbox("Departure Condition", list(WEATHER_ICONS.keys()))
-    dep_wx_msg = st.text_input("Dep Weather Brief", placeholder="e.g. Visual conditions...")
+    dep_wx_msg = st.text_input("Dep Weather Brief")
 with col_w2:
     a_icon_key = st.selectbox("Arrival Condition", list(WEATHER_ICONS.keys()))
-    arr_wx_msg = st.text_input("Arr Weather Brief", placeholder="e.g. Standard forecasted...")
+    arr_wx_msg = st.text_input("Arr Weather Brief")
 
 # --- 4. ADDITIONAL SERVICES ---
 st.markdown("---")
@@ -91,10 +91,7 @@ with c3:
 
 # --- 5. GENERATOR FUNCTION ---
 def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_icao, a_city, a_fbo, a_time, a_tz, d_icon, d_msg, a_icon, a_msg, services):
-    
     BRAND_COLOR = "#00d4ff"
-    
-    # Listado de servicios solicitado
     svc_items = [
         ("Pets on board", services['pets']),
         ("Catering", services['catering']),
@@ -104,10 +101,24 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_ica
         ("Special Cargo", services['cargo'])
     ]
     
+    # Construcción de servicios en una sola línea para evitar SyntaxError
     svc_html = "<div style='text-align:center; margin-top:10px;'>"
     for label, active in svc_items:
         color = BRAND_COLOR if active else "#cccccc"
         opacity = "1" if active else "0.2"
         border = f"1px solid {BRAND_COLOR}" if active else "1px solid #eeeeee"
-        # Construcción segura del bloque HTML por item
-        svc_item_html = f"""<div style="display:inline-block; width:135px; margin:5px; padding:8px 2px; border-radius:4px; border:{border}; opacity:{opacity}; text-align:center;">
+        svc_html += f'<div style="display:inline-block; width:135px; margin:5px; padding:8px 2px; border-radius:4px; border:{border}; opacity:{opacity}; text-align:center;"><div style="font-size:12px; color:{color}; font-weight:bold;">◈</div><div style="font-size:8px; color:{color}; font-weight:bold; text-transform:uppercase; letter-spacing:0.5px;">{label}</div></div>'
+    svc_html += "</div>"
+
+    # Clima
+    wx_section = f"""<div style='margin-top:15px; display: table; width: 100%;'><div style='display: table-cell; width: 48%; padding:12px; background:#fcfcfc; border:1px solid #eee; border-radius:8px; text-align:center;'><div style='font-size:20px;'>{d_icon}</div><b style='font-size:9px; color:#999;'>DEPARTURE WX</b><br><span style='font-size:11px; color:#333; font-weight:bold;'>{d_msg if d_msg else "Standard"}</span></div><div style='display: table-cell; width: 4%;'></div><div style='display: table-cell; width: 48%; padding:12px; background:#fcfcfc; border:1px solid #eee; border-radius:8px; text-align:center;'><div style='font-size:20px;'>{a_icon}</div><b style='font-size:9px; color:#999;'>ARRIVAL WX</b><br><span style='font-size:11px; color:#333; font-weight:bold;'>{a_msg if a_msg else "Standard"}</span></div></div>"""
+
+    return f"""
+    <div style="font-family: Arial, sans-serif; max-width: 500px; border: 1.5px solid #444; border-radius: 10px; overflow: hidden; margin: auto; background-color: #ffffff;">
+        <div style="background-color: #000; padding: 20px; text-align: center;"><h2 style="color: #00d4ff; margin: 0; font-size: 14px; text-transform: uppercase; letter-spacing: 2px;">{m_stage}</h2></div>
+        <div style="padding: 25px; color: #333;">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <span style="font-size: 26px; font-weight: bold;">{d_icao}</span>
+                <span style="color: {BRAND_COLOR}; font-size: 20px; margin: 0 10px;">✈</span>
+                <span style="font-size: 26px; font-weight: bold;">{a_icao}</span>
+                <div
