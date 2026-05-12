@@ -5,7 +5,7 @@ from datetime import datetime
 # --- PAGE CONFIGURATION ---
 st.set_page_config(page_title="VIP Milestone Console", layout="centered")
 
-# --- UI DESIGN (VIP DARK MODE) ---
+# --- UI DESIGN (CONSOLE INTERFACE) ---
 st.markdown("""
     <style>
     .stApp { background-color: #050505; color: #ffffff; }
@@ -20,7 +20,7 @@ st.markdown("""
         background-color: #111 !important; border: 1px solid #333 !important; 
     }
     input, textarea, select { color: #cb2d42 !important; }
-    label { color: #888 !important; font-size: 14px !important; }
+    label { color: #ccc !important; font-size: 14px !important; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -87,62 +87,9 @@ dep_wx_icon_key, arr_wx_icon_key = "Sunny", "Sunny"
 
 if milestone != "Trip Confirmation":
     st.subheader("🌫️ Weather Assessment")
-    col_dep_wx, col_arr_wx = st.columns(2)
-    with col_dep_wx:
+    col_w1, col_w2 = st.columns(2)
+    with col_w1:
         dep_wx_icon_key = st.selectbox("Departure Icon", list(WEATHER_ICONS.keys()))
         dep_wx_msg = st.text_input("Departure Brief")
-    with col_arr_wx:
-        arr_wx_icon_key = st.selectbox("Arrival Icon", list(WEATHER_ICONS.keys()))
-        arr_wx_msg = st.text_input("Arrival Brief")
-
-# --- 5. VIP NEWSLETTER GENERATOR ---
-def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_icao, a_city, a_fbo, a_time, a_tz, sw, d_wx_icon, d_wx_msg, a_wx_icon, a_wx_msg):
-    
-    # BRANDING
-    COMPANY_LOGO_URL = "https://images.teamtailor-cdn.com/images/s3/teamtailor-na-maroon/logotype-v3/image_uploads/d1ea3807-ceaf-486c-aefb-af34155789ba/original.png" 
-    BRAND_COLOR = "#cb2d42"
-    
-    title_map = {
-        "Trip Confirmation": "TRIP CONFIRMATION",
-        "Positioning Update": "POSITIONING UPDATE",
-        "Aircraft Ready & FBO Reception": "AIRCRAFT READY",
-        "Flight Active / Taxiing": "FLIGHT ACTIVE"
-    }
-    
-    tracker_html = ""
-    if m_stage == "Trip Confirmation":
-        tracker_html = f"<div style='margin-top:20px; border-top:1px solid #eee; padding-top:15px;'><b style='font-size:12px; color:#444;'>TRIP PROGRESS:</b><table width='100%' style='margin-top:10px;'>"
-        icons = {"Passenger info": "👤", "Luggage": "🧳", "Pets": "🐾", "Catering": "🍽️", "Ground transportation": "🚘", "Rental": "🔑", "Special medical assistance": "⚕️"}
-        for cat, active in sw.items():
-            color = BRAND_COLOR if active else "#cccccc"
-            status = "READY" if active else "PENDING"
-            tracker_html += f"<tr><td style='font-size:16px; width:30px;'>{icons[cat]}</td><td style='font-size:13px; color:#555;'>{cat}</td><td style='text-align:right; font-size:11px; font-weight:bold; color:{color};'>{status}</td></tr>"
-        tracker_html += "</table></div>"
-
-    wx_display = ""
-    if m_stage != "Trip Confirmation" and (d_wx_msg or a_wx_msg):
-        wx_display = f"""<div style='margin-top:20px; display: table; width: 100%; border-collapse: collapse;'>
-                            <div style='display: table-cell; width: 48%; padding:15px; background:#fff5f6; border-radius:8px; border-left:4px solid {BRAND_COLOR};'>
-                                <span style='font-size:24px;'>{d_wx_icon}</span><br>
-                                <b style='font-size:10px; color:{BRAND_COLOR};'>DEPARTURE:</b><br>
-                                <span style='font-size:12px;'>{d_wx_msg}</span>
-                            </div>
-                            <div style='display: table-cell; width: 4%;'></div>
-                            <div style='display: table-cell; width: 48%; padding:15px; background:#fff5f6; border-radius:8px; border-left:4px solid {BRAND_COLOR};'>
-                                <span style='font-size:24px;'>{a_wx_icon}</span><br>
-                                <b style='font-size:12px; color:{BRAND_COLOR};'>ARRIVAL:</b><br>
-                                <span style='font-size:12px;'>{a_wx_msg}</span>
-                            </div>
-                         </div>"""
-
-    msg_map = {
-        "Trip Confirmation": "Your flight details are confirmed. Please find your updated trip sheet attached.",
-        "Positioning Update": f"The aircraft is currently positioning to {d_city}. Operations are on schedule.",
-        "Aircraft Ready & FBO Reception": f"The aircraft is ready at {d_fbo}. The staff is prepared for your boarding.",
-        "Flight Active / Taxiing": f"The aircraft is taxiing at {d_icao}. Real-time monitoring is active."
-    }
-
-    return f"""
-    <div style="font-family: Arial, sans-serif; max-width: 500px; border: 1px solid #eee; border-radius: 12px; overflow: hidden; margin: auto; background-color: #ffffff;">
-        <div style="background-color: #000; padding: 25px; text-align: center;">
-            <img src="{COMPANY_LOGO_URL}"
+    with col_w2:
+        arr_wx_icon_key = st.
