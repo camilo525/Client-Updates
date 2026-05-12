@@ -45,44 +45,4 @@ def get_airport_details(icao):
 # --- 1. ITINERARY & FBO INPUTS ---
 st.subheader("📍 1. Flight Itinerary & FBO Details")
 col1, col2 = st.columns(2)
-with col1:
-    origin = st.text_input("Departure ICAO", key="org").upper()
-    dep_name, dep_city, dep_state, dep_tz = get_airport_details(origin)
-    dep_fbo = st.text_input("Departure FBO", value="Signature Flight Support")
-    dep_time = st.text_input("Local Departure Time", value="10:00 AM")
-with col2:
-    destination = st.text_input("Arrival ICAO", key="dst").upper()
-    arr_name, arr_city, arr_state, arr_tz = get_airport_details(destination)
-    arr_fbo = st.text_input("Arrival FBO", value="Jet Aviation")
-    arr_time = st.text_input("Local Arrival Time", value="01:30 PM")
-
-# --- 2. MILESTONE SELECTOR ---
-st.markdown("---")
-milestone = st.selectbox("Current Stage", [
-    "Trip Confirmation",
-    "Positioning Update",
-    "Aircraft Ready & FBO Reception",
-    "Flight Active / Taxiing"
-])
-
-# --- 3. TRIP CONFIRMATION LOGIC (PROGRESS TRACKER) ---
-switches = {}
-if milestone == "Trip Confirmation":
-    st.subheader("✅ Trip Progress Checklist")
-    c1, c2 = st.columns(2)
-    categories = ["Passenger info", "Luggage", "Pets", "Catering", "Ground transportation", "Rental", "Special medical assistance"]
-    for i, cat in enumerate(categories):
-        col = c1 if i % 2 == 0 else c2
-        switches[cat] = col.checkbox(cat)
-
-# --- 4. WEATHER LOGIC (VISIBLE IN ALL OPERATIONAL STAGES) ---
-dep_wx_msg, arr_wx_msg = "", ""
-d_icon_key, a_icon_key = "Sunny", "Sunny"
-
-# Se activa si NO es Trip Confirmation
-if milestone != "Trip Confirmation":
-    st.subheader("🌫️ Weather Assessment (Live Update)")
-    st.info("The weather brief will be included in the newsletter for this stage.")
-    col_w1, col_w2 = st.columns(2)
-    with col_w1:
-        d_icon_key = st.selectbox("Departure Icon", list(WEATHER_ICONS)
+with
