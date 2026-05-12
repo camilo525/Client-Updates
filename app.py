@@ -1,4 +1,4 @@
-import streamlit as st
+ import streamlit as st
 import pytz
 from datetime import datetime
 
@@ -80,4 +80,49 @@ def generate_newsletter_html(m_stage, d_icao, d_name, d_city, d_fbo, d_time, d_t
 
     return f"""
     <div style="font-family: Arial, sans-serif; max-width: 500px; border: 1px solid #eee; border-radius: 12px; overflow: hidden; margin: auto; background-color: #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
-        <div style="background-color:
+        <div style="background-color: #000; padding: 20px; text-align: center;">
+            <h2 style="color: #00d4ff; margin: 0; font-size: 16px; letter-spacing: 2px; font-weight: bold;">{title}</h2>
+        </div>
+        <div style="padding: 25px; color: #333;">
+            <div style="text-align: center; margin-bottom: 25px;">
+                <div style="font-size: 24px; font-weight: bold; color: #111;">{d_icao} <span style="color: #00d4ff;">✈</span> {a_icao}</div>
+                <div style="font-size: 12px; color: #888; margin-top: 5px;">{d_city} to {a_city}</div>
+            </div>
+            <p style="font-size: 14px; line-height: 1.6; color: #444; background: #f9f9f9; padding: 15px; border-radius: 8px; border-left: 4px solid #00d4ff;">{msg}</p>
+            <table width="100%" style="margin-top: 20px; border-collapse: collapse;">
+                <tr>
+                    <td style="width: 50%; padding-right: 10px; vertical-align: top;">
+                        <div style="font-size: 11px; color: #00d4ff; font-weight: bold; margin-bottom: 5px;">DEPARTURE</div>
+                        <div style="font-size: 13px; font-weight: bold;">{d_time}</div>
+                        <div style="font-size: 11px; color: #888;">{d_tz}</div>
+                        <div style="font-size: 12px; margin-top: 8px; color: #333;"><b>FBO:</b> {d_fbo}</div>
+                        <div style="font-size: 11px; color: #666;">{d_name}</div>
+                    </td>
+                    <td style="width: 50%; padding-left: 10px; vertical-align: top; border-left: 1px solid #eee;">
+                        <div style="font-size: 11px; color: #00d4ff; font-weight: bold; margin-bottom: 5px;">ARRIVAL</div>
+                        <div style="font-size: 13px; font-weight: bold;">{a_time}</div>
+                        <div style="font-size: 11px; color: #888;">{a_tz}</div>
+                        <div style="font-size: 12px; margin-top: 8px; color: #333;"><b>FBO:</b> {a_fbo}</div>
+                        <div style="font-size: 11px; color: #666;">{a_name}</div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div style="background-color: #000; padding: 12px; text-align: center; font-size: 10px; color: #555; letter-spacing: 1px;">
+            FLIGHT SUPPORT OPERATIONS | PRIVATE AVIATION
+        </div>
+    </div>
+    """
+
+# --- 4. GENERATE BUTTON ---
+if st.button("Generate VIP Newsletter"):
+    if origin and destination:
+        st.markdown("### 📧 Gmail Briefing Preview")
+        newsletter = generate_newsletter_html(
+            milestone, origin, dep_name, dep_city, dep_fbo, dep_time, dep_tz,
+            destination, arr_name, arr_city, arr_fbo, arr_time, arr_tz
+        )
+        st.components.v1.html(newsletter, height=500)
+        st.info("💡 Highlight the card above, copy it, and paste it into your email.")
+    else:
+        st.error("Please enter both ICAO codes.")
