@@ -91,9 +91,9 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_ica
     # Mensajes
     msg_map = {
         "Trip Coordination": "Hello, Please find attached the updated trip sheet with latest details.",
-        "Repositioning Update": "The aircraft is currently in its repositioning phase, all on track.",
-        "FBO Arrival & Boarding Coordination": f"Aircraft is ready at {d_fbo}. Crew is standing by.",
-        "Departure & Enroute Monitoring": "The aircraft is preparing for departure. Monitoring in progress."
+        "Repositioning Update": "The aircraft is currently in its repositioning phase. We will provide an update once the aircraft is in position and ready to welcome you on board. <b>We would appreciate a notification once you are approximately 15 minutes from the airport, allowing the FBO staff and flight crew to coordinate your arrival and ensure all preparations are in place</b>.",
+        "FBO Arrival & Boarding Coordination": f"Aircraft is ready at {d_fbo}. The flight crew and FBO staff are standing by to assist with your arrival, check-in, and boarding process.",
+        "Departure & Enroute Monitoring": "We noticed you are ready to depart, and our team will continue monitoring the flight’s progress through active flight following. The Estimated Time Enroute is: XX hrs XX mins."
     }
 
     # Servicios
