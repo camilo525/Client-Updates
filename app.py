@@ -66,10 +66,10 @@ st.subheader("🌫️ Weather Assessment")
 cw1, cw2 = st.columns(2)
 with cw1:
     d_icon_key = st.selectbox("Dep Weather", list(WEATHER_ICONS.keys()))
-    dep_wx_msg = st.text_input("Dep Brief", placeholder="e.g. Clear Skies")
+    dep_wx_msg = st.text_input("Dep Brief", placeholder="Paste Executive report here")
 with cw2:
     a_icon_key = st.selectbox("Arr Weather", list(WEATHER_ICONS.keys()))
-    arr_wx_msg = st.text_input("Arr Brief", placeholder="e.g. Standard conditions")
+    arr_wx_msg = st.text_input("Arr Brief", placeholder="Paste Executive report here")
 
 # --- 3. SERVICES ---
 st.subheader("⚙️ Additional Services")
