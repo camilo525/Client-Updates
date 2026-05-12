@@ -134,13 +134,13 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_ica
         </div>
         <table width="100%" style="margin-top:30px; border-top:1px solid #eee; padding-top:20px;"><tr>
             <td style="width:50%; vertical-align:top; border-right:1px solid #eee; padding-right:15px;">
-                <b style="color:{BRAND_COLOR}; font-size:10px;">DEPARTURE</b><br><b style="font-size:16px;">{d_time} ({d_tz})</b><br><div style="font-size:9px;">FBO: {d_fbo}</div>{r_tag(r_dep)}
+                <b style="color:{BRAND_COLOR}; font-size:10px;">DEPARTURE</b><br><b style="font-size:16px;">{d_time} ({d_tz})</b><br><div style="font-size:12px;">FBO: {d_fbo}</div>{r_tag(r_dep)}
             </td>
             <td style="width:50%; vertical-align:top; padding-left:15px; text-align:right;">
-                <b style="color:{BRAND_COLOR}; font-size:10px;">ARRIVAL</b><br><b style="font-size:16px;">{a_time} ({a_tz})</b><br><div style="font-size:9px;">FBO: {a_fbo}</div>{r_tag(r_arr)}
+                <b style="color:{BRAND_COLOR}; font-size:10px;">ARRIVAL</b><br><b style="font-size:16px;">{a_time} ({a_tz})</b><br><div style="font-size:12px;">FBO: {a_fbo}</div>{r_tag(r_arr)}
             </td>
         </tr></table></div>"""
-    footer = f'<div style="background:{DARK_BAR}; padding:15px; text-align:center; font-size:10px; color:#fff;">VIP OPERATIONAL UPDATE | PRIVATE AVIATION</div>'
+    footer = f'<div style="background:{DARK_BAR}; padding:15px; text-align:center; font-size:10px; color:#fff;">Should you require any further assistance, please do not hesitate to reach back out to us.</div>'
 
     return f'<div style="font-family:Arial; max-width:550px; border:1px solid {DARK_BAR}; margin:auto; background:#fff;">{header}{body}{footer}</div>'
 
