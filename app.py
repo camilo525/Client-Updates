@@ -64,7 +64,7 @@ milestone = st.selectbox("Select Current Milestone", [
     "Flight Active / Taxiing"
 ])
 
-# --- 3. WEATHER ASSESSMENT (AHORA PERMANENTE) ---
+# --- 3. WEATHER ASSESSMENT (PERMANENTE) ---
 st.markdown("---")
 st.subheader("🌫️ 3. Weather Assessment")
 col_w1, col_w2 = st.columns(2)
@@ -109,5 +109,5 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_ica
         color = BRAND_COLOR if active else "#cccccc"
         opacity = "1" if active else "0.2"
         border = f"1px solid {BRAND_COLOR}" if active else "1px solid #eeeeee"
-        svc_html += f"""
-        <div
+        # Construcción segura del bloque HTML por item
+        svc_item_html = f"""<div style="display:inline-block; width:135px; margin:5px; padding:8px 2px; border-radius:4px; border:{border}; opacity:{opacity}; text-align:center;">
