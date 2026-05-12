@@ -56,7 +56,7 @@ with col2:
     arr_time = st.text_input("Arrival Time", value="01:30 PM")
     ramp_arr = st.radio("Arr. Ramp Access", ["Authorized", "Not Authorized"], horizontal=True)
 
-milestone = st.selectbox("Current Milestone", ["Trip Confirmation", "Positioning Update", "Aircraft Ready & FBO Reception", "Flight Active / Taxiing"])
+milestone = st.selectbox("Current Milestone", ["Trip Coordination", "Repositioning Update", "FBO Arrival & Boarding Coordination", "Departure & Enroute Monitoring"])
 
 # --- 2. WEATHER ASSESSMENT ---
 st.subheader("🌫️ Weather Assessment")
