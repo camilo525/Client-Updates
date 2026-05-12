@@ -116,7 +116,7 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, a_icao, a_c
         "Repositioning Update": "The aircraft is currently in its repositioning phase, and all operations are proceeding as planned. We will provide an update once the aircraft is in position and ready to welcome you on board.",
         "FBO Arrival & Boarding Coordination": f"Aircraft is ready at {d_fbo}. The flight crew and FBO staff are standing by to assist with your arrival, check-in, and boarding process. <b>We would appreciate it if you could notify us when you are approximately 15 minutes away from the airport, enabling our crew to prepare for your timely departure.<b>",
         "Departure & Enroute Monitoring": "The aircraft is preparing for departure. We noticed you are ready to depart, and our team will continue monitoring the flight’s progress through active flight following.".
-
+        )
     # Construcción final del string
     html = f"""<div style="font-family: Arial, sans-serif; max-width: 550px; border: 2px solid {DARK_BAR}; border-radius: 15px; overflow: hidden; margin: auto; background-color: #ffffff;">
 <div style="background-color: {DARK_BAR}; padding: 40px 20px; text-align: center;"><h2 style="color: #ffffff; margin: 0; font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 4px;">{m_stage}</h2></div>
