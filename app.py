@@ -15,11 +15,8 @@ st.markdown("""
         -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         text-align: center; margin-bottom: 30px;
     }
-    /* Estilo para los selectboxes de iconos */
-    .stSelectbox div[data-baseweb="select"] {
-        font-size: 24px !important;  /* Iconos más grandes */
-    }
-    div[data-baseweb="input"], div[data-baseweb="textarea"], div[data-baseweb="select"] { 
+    .stSelectbox div[data-baseweb="select"] { font-size: 24px !important; }
+    div[data-baseweb="input"], div[data-baseweb="textarea"], div[data-baseweb="select"], div[data-baseweb="checkbox"] { 
         background-color: #111 !important; border: 1px solid #333 !important; 
     }
     input, textarea, select { color: #00d4ff !important; }
@@ -41,15 +38,9 @@ AIRPORT_DB = {
     "EGSS": ["Stansted Airport", "London", "UK", "Europe/London"]
 }
 
-# Mapping icons to Emojis (Simple and compatible with Gmail)
 WEATHER_ICONS = {
-    "Sunny": "☀️",
-    "Partly Cloudy": "⛅",
-    "Cloudy": "☁️",
-    "Rainy": "🌧️",
-    "Thunderstorm": "⛈️",
-    "Snowy": "❄️",
-    "Foggy": "🌫️"
+    "Sunny": "☀️", "Partly Cloudy": "⛅", "Cloudy": "☁️", 
+    "Rainy": "🌧️", "Thunderstorm": "⛈️", "Snowy": "❄️", "Foggy": "🌫️"
 }
 
 def get_airport_details(icao):
@@ -81,60 +72,74 @@ milestone = st.selectbox("Current Stage", [
     "Flight Active / Taxiing"
 ])
 
-# --- BLOQUE 4: ENHANCED WEATHER INPUT (Two Blocks + Icons) ---
-dep_wx_msg = ""
-dep_wx_icon_key = "Sunny"
-arr_wx_msg = ""
-arr_wx_icon_key = "Sunny"
+# --- 3. WEATHER ASSESSMENT ---
+dep_wx_msg, arr_wx_msg = "", ""
+d_icon_key, a_icon_key = "Sunny", "Sunny"
 
 if milestone == "Positioning Update":
     st.markdown("---")
     st.subheader("🌫️ 3. Weather Assessment")
-    st.info("Paste information from the OPS Tool below and select the condition icon.")
-    
-    col_dep_wx, col_arr_wx = st.columns(2)
-    
-    with col_dep_wx:
-        st.markdown(f"### Weather at {dep_city}")
-        # Selector de iconos para la salida
-        dep_wx_icon_key = st.selectbox("Departure Condition Icon", list(WEATHER_ICONS.keys()))
-        # Input de texto para la salida
-        dep_wx_msg = st.text_input("Departure Weather Brief", placeholder="e.g. Clears skies, visual conditions...")
+    col_w1, col_w2 = st.columns(2)
+    with col_w1:
+        d_icon_key = st.selectbox("Departure Icon", list(WEATHER_ICONS.keys()))
+        dep_wx_msg = st.text_input("Departure Brief", placeholder="e.g. Clear skies...")
+    with col_w2:
+        a_icon_key = st.selectbox("Arrival Icon", list(WEATHER_ICONS.keys()))
+        arr_wx_msg = st.text_input("Arrival Brief", placeholder="e.g. Standard conditions...")
 
-    with col_arr_wx:
-        st.markdown(f"### Weather at {arr_city}")
-        # Selector de iconos para la llegada
-        arr_wx_icon_key = st.selectbox("Arrival Condition Icon", list(WEATHER_ICONS.keys()))
-        # Input de texto para la llegada
-        arr_wx_msg = st.text_input("Arrival Weather Brief", placeholder="e.g. Forecasted rain, operational...")
+# --- 4. ADDITIONAL SERVICES (NEW SECTION) ---
+st.markdown("---")
+st.subheader("➕ 4. Additional Services")
+col_s1, col_s2, col_s3 = st.columns(3)
+with col_s1:
+    s_pax = st.checkbox("Pax Names Received")
+    s_catering = st.checkbox("Catering Ready")
+with col_s2:
+    s_ground = st.checkbox("Ground Transp.")
+    s_rental = st.checkbox("Rental Car")
+with col_s3:
+    s_driver = st.checkbox("Chauffeur Service")
 
-# --- 3. VIP NEWSLETTER GENERATOR (HTML) ---
-def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_icao, a_city, a_fbo, a_time, a_tz, d_wx_icon, d_wx_msg, a_wx_icon, a_wx_msg):
+# --- 5. VIP NEWSLETTER GENERATOR ---
+def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_icao, a_city, a_fbo, a_time, a_tz, d_icon, d_msg, a_icon, a_msg, services):
+    
+    # Logic for Services Icons
+    # Format: (Icon, Active_Status)
+    svc_list = [
+        ("👤", services['pax']),
+        ("🍽️", services['catering']),
+        ("🚘", services['ground']),
+        ("🔑", services['rental']),
+        ("👨‍✈️", services['driver'])
+    ]
+    
+    svc_html = "<div style='margin-top:20px; text-align:center;'>"
+    for icon, is_active in svc_list:
+        color = "#00d4ff" if is_active else "#e0e0e033" # Brilla o se vuelve transparente
+        opacity = "1" if is_active else "0.3"
+        svc_html += f"<span style='font-size:24px; margin:0 10px; color:{color}; opacity:{opacity};'>{icon}</span>"
+    svc_html += "</div>"
+
     if m_stage == "Trip Confirmation":
-        title, msg = "TRIP CONFIRMATION", "Your flight details are confirmed. Please find your updated trip sheet attached for your review."
+        title, msg = "TRIP CONFIRMATION", "Your flight details are confirmed. Please find your updated trip sheet attached."
         wx_display = ""
     elif m_stage == "Positioning Update":
         title, msg = "POSITIONING UPDATE", f"The aircraft is currently positioning. Operations are proceeding as scheduled."
-        
-        # Two elegant Weather blocks
-        wx_display = f"""<div style='margin-top:20px; display: table; width: 100%; border-collapse: collapse;'>
+        wx_display = f"""<div style='margin-top:20px; display: table; width: 100%;'>
                             <div style='display: table-cell; width: 48%; padding:15px; background:#f4faff; border-radius:8px; border-left:4px solid #00d4ff;'>
-                                <span style='font-size:24px;'>{d_wx_icon}</span><br>
+                                <span style='font-size:24px;'>{d_icon}</span><br>
                                 <b style='font-size:12px; color:#005fcc;'>DEPARTURE:</b><br>
-                                <span style='font-size:13px; color:#444;'>{d_wx_msg}</span>
+                                <span style='font-size:13px; color:#444;'>{d_msg}</span>
                             </div>
                             <div style='display: table-cell; width: 4%;'></div>
                             <div style='display: table-cell; width: 48%; padding:15px; background:#f4faff; border-radius:8px; border-left:4px solid #00d4ff;'>
-                                <span style='font-size:24px;'>{a_wx_icon}</span><br>
+                                <span style='font-size:24px;'>{a_icon}</span><br>
                                 <b style='font-size:12px; color:#005fcc;'>ARRIVAL:</b><br>
-                                <span style='font-size:13px; color:#444;'>{a_wx_msg}</span>
+                                <span style='font-size:13px; color:#444;'>{a_msg}</span>
                             </div>
-                         </div>""" if (d_wx_msg or a_wx_msg) else ""
-    elif m_stage == "Aircraft Ready & FBO Reception":
-        title, msg = "AIRCRAFT READY", f"The aircraft is fueled and ready at {d_fbo}. The staff is prepared to assist you with boarding."
-        wx_display = ""
+                         </div>"""
     else:
-        title, msg = "FLIGHT ACTIVE", f"The aircraft is taxiing at {d_icao}. We are monitoring your flight in real-time until arrival."
+        title, msg = "FLIGHT STATUS", f"Operational update for your flight from {d_icao} to {a_icao}."
         wx_display = ""
 
     return f"""
@@ -147,9 +152,13 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_ica
                 <div style="font-size: 26px; font-weight: bold; color: #111;">{d_icao} <span style="color: #00d4ff;">✈</span> {a_icao}</div>
                 <div style="font-size: 12px; color: #888; margin-top: 5px;">{d_city} to {a_city}</div>
             </div>
-            <p style="font-size: 14px; line-height: 1.6; color: #444; margin-bottom: 0;">{msg}</p>
+            <p style="font-size: 14px; line-height: 1.6; color: #444;">{msg}</p>
             {wx_display}
-            <hr style="border: 0; border-top: 1px solid #eee; margin: 25px 0;">
+            <div style="border-top:1px solid #eee; margin-top:20px; padding-top:10px;">
+                <b style="font-size:10px; color:#888; letter-spacing:1px;">ADDITIONAL SERVICES</b>
+                {svc_html}
+            </div>
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
             <table width="100%" style="font-size: 12px; border-collapse: collapse;">
                 <tr>
                     <td style="width: 50%; padding-right: 10px; vertical-align: top;">
@@ -171,20 +180,23 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_ica
     </div>
     """
 
-# --- 4. ACTION BUTTON ---
+# --- 6. ACTION ---
 if st.button("Generate VIP Newsletter"):
     if origin and destination:
         st.markdown("### 📧 Gmail Briefing Preview")
-        # Obtener los Emojis correspondientes de las claves seleccionadas
-        d_icon = WEATHER_ICONS.get(dep_wx_icon_key, "")
-        a_icon = WEATHER_ICONS.get(arr_wx_icon_key, "")
+        d_icon = WEATHER_ICONS.get(d_icon_key, "")
+        a_icon = WEATHER_ICONS.get(a_icon_key, "")
+        
+        services_status = {
+            'pax': s_pax, 'catering': s_catering, 
+            'ground': s_ground, 'rental': s_rental, 'driver': s_driver
+        }
         
         newsletter = generate_newsletter_html(
             milestone, origin, dep_city, dep_fbo, dep_time, dep_tz, 
             destination, arr_city, arr_fbo, arr_time, arr_tz,
-            d_icon, dep_wx_msg, a_icon, arr_wx_msg
+            d_icon, dep_wx_msg, a_icon, arr_wx_msg, services_status
         )
-        st.components.v1.html(newsletter, height=600)
-        st.info("💡 Highlight the card, copy it, and paste it into your Gmail thread.")
+        st.components.v1.html(newsletter, height=750)
     else:
         st.error("Please enter both Departure and Arrival ICAO.")
