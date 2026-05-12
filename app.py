@@ -9,7 +9,7 @@ st.markdown("""
     .stApp { background-color: #050505; color: #ffffff; }
     .main-title {
         font-size: 32px; font-weight: bold;
-        background: -webkit-linear-gradient(#00d4ff, #005fcc);
+        background: -webkit-linear-gradient(#cb2d42, #8e1e2d);
         -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         text-align: center; margin-bottom: 30px;
         letter-spacing: 2px;
@@ -17,7 +17,7 @@ st.markdown("""
     div[data-baseweb="input"], div[data-baseweb="textarea"], div[data-baseweb="select"], div[data-baseweb="checkbox"] { 
         background-color: #111 !important; border: 1px solid #333 !important; 
     }
-    input, textarea, select { color: #00d4ff !important; }
+    input, textarea, select { color: #cb2d42 !important; }
     label { color: #aaa !important; font-size: 14px !important; text-transform: uppercase; }
     </style>
     """, unsafe_allow_html=True)
@@ -55,7 +55,7 @@ with col2:
 
 milestone = st.selectbox("Current Milestone", ["Trip Confirmation", "Positioning Update", "Aircraft Ready & FBO Reception", "Flight Active / Taxiing"])
 
-# --- 2. WEATHER ASSESSMENT (PERMANENTE EN CONSOLA) ---
+# --- 2. WEATHER ASSESSMENT ---
 st.subheader("🌫️ Weather Assessment")
 c_w1, c_w2 = st.columns(2)
 with c_w1:
@@ -79,7 +79,7 @@ with cs3:
 
 # --- 4. GENERATOR FUNCTION ---
 def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, a_icao, a_city, a_fbo, a_time, d_icon, d_msg, a_icon, a_msg, services):
-    BRAND_COLOR = "#00d4ff"
+    BRAND_COLOR = "#cb2d42"
     
     svc_data = [
         {"label": "PETS", "active": services['pets']},
@@ -91,7 +91,7 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, a_icao, a_c
     
     svc_html = "<div style='margin-top:20px; text-align:center;'>"
     for item in svc_data:
-        bg = "#e6faff" if item['active'] else "#f5f5f5"
+        bg = "#fff5f6" if item['active'] else "#f5f5f5"
         txt = BRAND_COLOR if item['active'] else "#bbbbbb"
         border = f"2px solid {BRAND_COLOR}" if item['active'] else "2px solid #eeeeee"
         svc_html += f"""
@@ -158,7 +158,7 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, a_icao, a_c
                 </tr>
             </table>
         </div>
-        <div style="background-color: #333; padding: 15px; text-align: center; font-size: 11px; color: #fff; letter-spacing: 1px;">
+        <div style="background-color: #000; padding: 15px; text-align: center; font-size: 11px; color: #ffffff; letter-spacing: 1px;">
             VIP OPERATIONAL UPDATE | PRIVATE AVIATION
         </div>
     </div>
@@ -170,20 +170,7 @@ if st.button("Generate Executive Report"):
     if origin and destination:
         d_icon = WEATHER_ICONS.get(d_icon_key, "")
         a_icon = WEATHER_ICONS.get(a_icon_key, "")
-        
-        status = {
-            'pets': s_pets, 
-            'catering': s_catering, 
-            'ground': s_ground, 
-            'rental': s_rental, 
-            'assist': s_assist
-        }
-        
-        newsletter = generate_newsletter_html(
-            milestone, origin, dep_city, dep_fbo, dep_time, 
-            destination, arr_city, arr_fbo, arr_time,
-            d_icon, dep_wx_msg, a_icon, arr_wx_msg, status
-        )
+        status = {'pets': s_pets, 'catering': s_catering, 'ground': s_ground, 'rental': s_rental, 'assist': s_assist}
+        newsletter = generate_newsletter_html(milestone, origin, dep_city, dep_fbo, dep_time, destination, arr_city, arr_fbo, arr_time, d_icon, dep_wx_msg, a_icon, arr_wx_msg, status)
         st.components.v1.html(newsletter, height=1000)
     else:
-        st.error("Please enter codes first.")
