@@ -36,19 +36,14 @@ AIRPORT_DB = {
 }
 
 WEATHER_ICONS = {
-    "Sunny": "☀️", 
-    "Partly Cloudy": "⛅", 
-    "Cloudy": "☁️", 
-    "Rainy": "🌧️", 
-    "Thunderstorm": "⛈️", 
-    "Snowy": "❄️", 
-    "Foggy": "🌫️"
+    "Sunny": "☀️", "Partly Cloudy": "⛅", "Cloudy": "☁️", 
+    "Rainy": "🌧️", "Thunderstorm": "⛈️", "Snowy": "❄️", "Foggy": "🌫️"
 }
 
 def get_airport_details(icao):
     return AIRPORT_DB.get(icao, [icao, "Unknown City", "Unknown State", "UTC"])
 
-# --- INPUTS ---
+# --- 1. INPUTS ---
 st.subheader("📍 Flight Itinerary")
 col1, col2 = st.columns(2)
 with col1:
@@ -64,12 +59,11 @@ with col2:
 
 milestone = st.selectbox("Current Milestone", ["Trip Confirmation", "Positioning Update", "Aircraft Ready & FBO Reception", "Flight Active / Taxiing"])
 
-# --- WEATHER & SERVICES ---
+# --- 2. WEATHER & SERVICES ---
 dep_wx_msg, arr_wx_msg = "", ""
 d_icon_key, a_icon_key = "Sunny", "Sunny"
 
 if milestone == "Positioning Update":
-    st.info("Select weather icons and add brief comments.")
     c_w1, c_w2 = st.columns(2)
     with c_w1:
         d_icon_key = st.selectbox("Dep Weather Icon", list(WEATHER_ICONS.keys()))
@@ -84,9 +78,8 @@ with cs1: s_catering = st.checkbox("Catering Ready")
 with cs2: s_ground = st.checkbox("Ground Transp.")
 with cs3: s_rental = st.checkbox("Rental Car")
 
-# --- GENERATOR ---
+# --- 3. GENERATOR ---
 def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_icao, a_city, a_fbo, a_time, a_tz, d_icon, d_msg, a_icon, a_msg, services):
-    
     BRAND_COLOR = "#00d4ff"
     
     # Dashboard de Servicios
@@ -107,29 +100,28 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_ica
         </div>"""
     svc_html += "</div>"
 
-    # Bloque de Clima con Logos Bien Puestos
+    # Bloque de Clima
     wx_display = ""
     if m_stage == "Positioning Update":
         wx_display = f"""
         <div style='margin-top:15px; display: table; width: 100%; border-collapse: separate;'>
-            <div style='display: table-cell; width: 48%; padding:12px; background:#fcfcfc; border:1px solid #eee; border-radius:8px; text-align:center; vertical-align:middle;'>
+            <div style='display: table-cell; width: 48%; padding:12px; background:#fcfcfc; border:1px solid #eee; border-radius:8px; text-align:center;'>
                 <div style='font-size:24px; margin-bottom:5px;'>{d_icon}</div>
                 <b style='font-size:9px; color:#999; text-transform:uppercase;'>Departure WX</b><br>
                 <span style='font-size:12px; color:#333; font-weight:bold;'>{d_msg}</span>
             </div>
             <div style='display: table-cell; width: 4%;'></div>
-            <div style='display: table-cell; width: 48%; padding:12px; background:#fcfcfc; border:1px solid #eee; border-radius:8px; text-align:center; vertical-align:middle;'>
+            <div style='display: table-cell; width: 48%; padding:12px; background:#fcfcfc; border:1px solid #eee; border-radius:8px; text-align:center;'>
                 <div style='font-size:24px; margin-bottom:5px;'>{a_icon}</div>
-                <b style='font-size:9px; color:#999; text-transform:uppercase;'>Arrival WX</b><br>
+                <b style='font-size:10px; color:#999; text-transform:uppercase;'>Arrival WX</b><br>
                 <span style='font-size:12px; color:#333; font-weight:bold;'>{a_msg}</span>
             </div>
         </div>"""
 
-    # Itinerario Base
     msg_map = {
         "Trip Confirmation": "Flight details are confirmed for your upcoming mission.",
         "Positioning Update": "The aircraft is currently in the positioning phase.",
-        "Aircraft Ready & FBO Reception": f"Aircraft is ready at {d_fbo}. Ground staff prepared.",
+        "Aircraft Ready & FBO Reception": f"Aircraft is ready at {d_fbo}.",
         "Flight Active / Taxiing": "Aircraft is taxiing. Operational monitoring is live."
     }
 
@@ -143,9 +135,4 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_ica
                 <span style="font-size: 28px; font-weight: 800; color: #000;">{d_icao}</span>
                 <span style="color: {BRAND_COLOR}; font-size: 22px; margin: 0 10px;">✈</span>
                 <span style="font-size: 28px; font-weight: 800; color: #000;">{a_icao}</span>
-                <div style="font-size: 11px; color: #666; font-weight: 600;">{d_city} TO {a_city}</div>
-            </div>
-            <p style="font-size: 14px; line-height: 1.4; color: #444; text-align: center; margin-bottom: 10px;">{msg_map[m_stage]}</p>
-            {wx_display}
-            <div style="margin-top:20px; padding: 15px; border: 1px solid #eee; border-radius: 8px; background: #fafafa;">
-                <div style="text-align:center; font-
+                <div style="
