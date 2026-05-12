@@ -5,25 +5,21 @@ from datetime import datetime
 # --- PAGE CONFIGURATION ---
 st.set_page_config(page_title="VIP Milestone Console", layout="centered")
 
-# --- UI DESIGN (VIP DARK MODE) ---
+# --- UI DESIGN (CONSOLE INTERFACE) ---
 st.markdown("""
     <style>
     .stApp { background-color: #050505; color: #ffffff; }
     .main-title {
         font-size: 32px; font-weight: bold;
-        background: -webkit-linear-gradient(#00d4ff, #005fcc);
+        background: -webkit-linear-gradient(#cb2d42, #911d2d);
         -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         text-align: center; margin-bottom: 30px;
     }
-    /* Estilo para los selectboxes de iconos */
-    .stSelectbox div[data-baseweb="select"] {
-        font-size: 24px !important;  /* Iconos más grandes */
-    }
-    div[data-baseweb="input"], div[data-baseweb="textarea"], div[data-baseweb="select"] { 
+    div[data-baseweb="input"], div[data-baseweb="textarea"], div[data-baseweb="select"], div[data-baseweb="checkbox"] { 
         background-color: #111 !important; border: 1px solid #333 !important; 
     }
-    input, textarea, select { color: #00d4ff !important; }
-    label { color: #888 !important; font-size: 14px !important; }
+    input, textarea, select { color: #cb2d42 !important; }
+    label { color: #ccc !important; font-size: 14px !important; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -41,16 +37,7 @@ AIRPORT_DB = {
     "EGSS": ["Stansted Airport", "London", "UK", "Europe/London"]
 }
 
-# Mapping icons to Emojis (Simple and compatible with Gmail)
-WEATHER_ICONS = {
-    "Sunny": "☀️",
-    "Partly Cloudy": "⛅",
-    "Cloudy": "☁️",
-    "Rainy": "🌧️",
-    "Thunderstorm": "⛈️",
-    "Snowy": "❄️",
-    "Foggy": "🌫️"
-}
+WEATHER_ICONS = {"Sunny": "☀️", "Partly Cloudy": "⛅", "Cloudy": "☁️", "Rainy": "🌧️", "Thunderstorm": "⛈️", "Snowy": "❄️", "Foggy": "🌫️"}
 
 def get_airport_details(icao):
     return AIRPORT_DB.get(icao, [icao, "Unknown City", "Unknown State", "UTC"])
@@ -58,13 +45,11 @@ def get_airport_details(icao):
 # --- 1. ITINERARY & FBO INPUTS ---
 st.subheader("📍 1. Flight Itinerary & FBO Details")
 col1, col2 = st.columns(2)
-
 with col1:
     origin = st.text_input("Departure ICAO", key="org").upper()
     dep_name, dep_city, dep_state, dep_tz = get_airport_details(origin)
     dep_fbo = st.text_input("Departure FBO", value="Signature Flight Support")
     dep_time = st.text_input("Local Departure Time", value="10:00 AM")
-
 with col2:
     destination = st.text_input("Arrival ICAO", key="dst").upper()
     arr_name, arr_city, arr_state, arr_tz = get_airport_details(destination)
@@ -73,7 +58,6 @@ with col2:
 
 # --- 2. MILESTONE SELECTOR ---
 st.markdown("---")
-st.subheader("🗓 2. Select Milestone")
 milestone = st.selectbox("Current Stage", [
     "Trip Confirmation",
     "Positioning Update",
@@ -81,110 +65,91 @@ milestone = st.selectbox("Current Stage", [
     "Flight Active / Taxiing"
 ])
 
-# --- BLOQUE 4: ENHANCED WEATHER INPUT (Two Blocks + Icons) ---
-dep_wx_msg = ""
-dep_wx_icon_key = "Sunny"
-arr_wx_msg = ""
-arr_wx_icon_key = "Sunny"
+# --- 3. TRIP CONFIRMATION LOGIC (PROGRESS TRACKER) ---
+switches = {}
+if milestone == "Trip Confirmation":
+    st.subheader("✅ Trip Progress Checklist")
+    c1, c2 = st.columns(2)
+    categories = ["Passenger info", "Luggage", "Pets", "Catering", "Ground transportation", "Rental", "Special medical assistance"]
+    for i, cat in enumerate(categories):
+        col = c1 if i % 2 == 0 else c2
+        switches[cat] = col.checkbox(cat)
 
+# --- 4. WEATHER LOGIC ---
+dep_wx_msg, arr_wx_msg = "", ""
+d_icon_key, a_icon_key = "Sunny", "Sunny"
 if milestone == "Positioning Update":
-    st.markdown("---")
-    st.subheader("🌫️ 3. Weather Assessment")
-    st.info("Paste information from the OPS Tool below and select the condition icon.")
-    
-    col_dep_wx, col_arr_wx = st.columns(2)
-    
-    with col_dep_wx:
-        st.markdown(f"### Weather at {dep_city}")
-        # Selector de iconos para la salida
-        dep_wx_icon_key = st.selectbox("Departure Condition Icon", list(WEATHER_ICONS.keys()))
-        # Input de texto para la salida
-        dep_wx_msg = st.text_input("Departure Weather Brief", placeholder="e.g. Clears skies, visual conditions...")
+    st.subheader("🌫️ Weather Assessment")
+    col_w1, col_w2 = st.columns(2)
+    with col_w1:
+        d_icon_key = st.selectbox("Departure Icon", list(WEATHER_ICONS.keys()))
+        dep_wx_msg = st.text_input("Departure Brief")
+    with col_w2:
+        a_icon_key = st.selectbox("Arrival Icon", list(WEATHER_ICONS.keys()))
+        arr_wx_msg = st.text_input("Arrival Brief")
 
-    with col_arr_wx:
-        st.markdown(f"### Weather at {arr_city}")
-        # Selector de iconos para la llegada
-        arr_wx_icon_key = st.selectbox("Arrival Condition Icon", list(WEATHER_ICONS.keys()))
-        # Input de texto para la llegada
-        arr_wx_msg = st.text_input("Arrival Weather Brief", placeholder="e.g. Forecasted rain, operational...")
-
-# --- 3. VIP NEWSLETTER GENERATOR (HTML) ---
-def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_icao, a_city, a_fbo, a_time, a_tz, d_wx_icon, d_wx_msg, a_wx_icon, a_wx_msg):
+# --- 5. VIP NEWSLETTER GENERATOR ---
+def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_icao, a_city, a_fbo, a_time, a_tz, sw, d_wx_icon, d_wx_msg, a_wx_icon, a_wx_msg):
+    
+    # --- BRANDING: CHANGE LOGO URL HERE ---
+    COMPANY_LOGO_URL = "https://images.teamtailor-cdn.com/images/s3/teamtailor-na-maroon/logotype-v3/image_uploads/d1ea3807-ceaf-486c-aefb-af34155789ba/original.png" 
+    BRAND_COLOR = "#cb2d42"
+    
+    title_map = {
+        "Trip Confirmation": "TRIP CONFIRMATION",
+        "Positioning Update": "POSITIONING UPDATE",
+        "Aircraft Ready & FBO Reception": "AIRCRAFT READY",
+        "Flight Active / Taxiing": "FLIGHT ACTIVE"
+    }
+    
+    # Progress Tracker HTML
+    tracker_html = ""
     if m_stage == "Trip Confirmation":
-        title, msg = "TRIP CONFIRMATION", "Your flight details are confirmed. Please find your updated trip sheet attached for your review."
-        wx_display = ""
-    elif m_stage == "Positioning Update":
-        title, msg = "POSITIONING UPDATE", f"The aircraft is currently positioning. Operations are proceeding as scheduled."
-        
-        # Two elegant Weather blocks
-        wx_display = f"""<div style='margin-top:20px; display: table; width: 100%; border-collapse: collapse;'>
-                            <div style='display: table-cell; width: 48%; padding:15px; background:#f4faff; border-radius:8px; border-left:4px solid #00d4ff;'>
-                                <span style='font-size:24px;'>{d_wx_icon}</span><br>
-                                <b style='font-size:12px; color:#005fcc;'>DEPARTURE:</b><br>
-                                <span style='font-size:13px; color:#444;'>{d_wx_msg}</span>
-                            </div>
-                            <div style='display: table-cell; width: 4%;'></div>
-                            <div style='display: table-cell; width: 48%; padding:15px; background:#f4faff; border-radius:8px; border-left:4px solid #00d4ff;'>
-                                <span style='font-size:24px;'>{a_wx_icon}</span><br>
-                                <b style='font-size:12px; color:#005fcc;'>ARRIVAL:</b><br>
-                                <span style='font-size:13px; color:#444;'>{a_wx_msg}</span>
-                            </div>
-                         </div>""" if (d_wx_msg or a_wx_msg) else ""
-    elif m_stage == "Aircraft Ready & FBO Reception":
-        title, msg = "AIRCRAFT READY", f"The aircraft is fueled and ready at {d_fbo}. The staff is prepared to assist you with boarding."
-        wx_display = ""
-    else:
-        title, msg = "FLIGHT ACTIVE", f"The aircraft is taxiing at {d_icao}. We are monitoring your flight in real-time until arrival."
-        wx_display = ""
+        tracker_html = f"<div style='margin-top:20px; border-top:1px solid #eee; padding-top:15px;'><b style='font-size:12px; color:#444;'>TRIP PROGRESS:</b><table width='100%' style='margin-top:10px;'>"
+        icons = {"Passenger info": "👤", "Luggage": "🧳", "Pets": "🐾", "Catering": "🍽️", "Ground transportation": "🚘", "Rental": "🔑", "Special medical assistance": "⚕️"}
+        for cat, active in sw.items():
+            color = BRAND_COLOR if active else "#cccccc"
+            status = "READY" if active else "PENDING"
+            tracker_html += f"<tr><td style='font-size:16px; width:30px;'>{icons[cat]}</td><td style='font-size:13px; color:#555;'>{cat}</td><td style='text-align:right; font-size:11px; font-weight:bold; color:{color};'>{status}</td></tr>"
+        tracker_html += "</table></div>"
+
+    # Weather Display HTML
+    wx_display = ""
+    if m_stage == "Positioning Update":
+        wx_display = f"<div style='margin-top:15px; display:flex; gap:10px;'><div style='flex:1; background:#fff5f6; padding:10px; border-radius:8px; border-left:4px solid {BRAND_COLOR};'><span style='font-size:20px;'>{d_wx_icon}</span><br><b style='font-size:10px; color:{BRAND_COLOR};'>DEP WX:</b><br><span style='font-size:12px;'>{d_wx_msg}</span></div><div style='flex:1; background:#fff5f6; padding:10px; border-radius:8px; border-left:4px solid {BRAND_COLOR};'><span style='font-size:20px;'>{a_wx_icon}</span><br><b style='font-size:10px; color:{BRAND_COLOR};'>ARR WX:</b><br><span style='font-size:12px;'>{a_wx_msg}</span></div></div>"
 
     return f"""
-    <div style="font-family: Arial, sans-serif; max-width: 500px; border: 1px solid #eee; border-radius: 12px; overflow: hidden; margin: auto; background-color: #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
-        <div style="background-color: #000; padding: 20px; text-align: center;">
-            <h2 style="color: #00d4ff; margin: 0; font-size: 16px; letter-spacing: 2px;">{title}</h2>
+    <div style="font-family: Arial, sans-serif; max-width: 500px; border: 1px solid #eee; border-radius: 12px; overflow: hidden; margin: auto; background-color: #ffffff;">
+        <div style="background-color: #000; padding: 25px; text-align: center;">
+            <img src="{COMPANY_LOGO_URL}" height="45" style="margin-bottom:15px;"><br>
+            <h2 style="color: {BRAND_COLOR}; margin: 0; font-size: 16px; letter-spacing: 2px;">{title_map[m_stage]}</h2>
         </div>
         <div style="padding: 25px; color: #333;">
             <div style="text-align: center; margin-bottom: 25px;">
-                <div style="font-size: 26px; font-weight: bold; color: #111;">{d_icao} <span style="color: #00d4ff;">✈</span> {a_icao}</div>
+                <div style="font-size: 28px; font-weight: bold;"><span style="color:{BRAND_COLOR};">{d_icao}</span> <span style="color: {BRAND_COLOR};">✈</span> <span style="color:{BRAND_COLOR};">{a_icao}</span></div>
                 <div style="font-size: 12px; color: #888; margin-top: 5px;">{d_city} to {a_city}</div>
             </div>
-            <p style="font-size: 14px; line-height: 1.6; color: #444; margin-bottom: 0;">{msg}</p>
+            {tracker_html}
             {wx_display}
-            <hr style="border: 0; border-top: 1px solid #eee; margin: 25px 0;">
-            <table width="100%" style="font-size: 12px; border-collapse: collapse;">
+            <table width="100%" style="margin-top: 25px; border-top: 1px solid #eee; padding-top: 15px; font-size: 12px;">
                 <tr>
-                    <td style="width: 50%; padding-right: 10px; vertical-align: top;">
-                        <div style="color: #00d4ff; font-weight: bold; font-size: 10px; margin-bottom: 5px;">DEPARTURE</div>
-                        <b>{d_time}</b> ({d_tz})<br>
-                        <span style="color:#666;">FBO: {d_fbo}</span>
-                    </td>
-                    <td style="width: 50%; padding-left: 10px; vertical-align: top; border-left: 1px solid #eee;">
-                        <div style="color: #00d4ff; font-weight: bold; font-size: 10px; margin-bottom: 5px;">ARRIVAL</div>
-                        <b>{a_time}</b> ({a_tz})<br>
-                        <span style="color:#666;">FBO: {a_fbo}</span>
-                    </td>
+                    <td style="width: 50%; vertical-align: top;"><b>DEPARTURE:</b><br><span style="font-size:13px; font-weight:bold;">{d_time}</span><br><span style="color:#666;">FBO: {d_fbo}</span><br><span style="font-size:10px; color:#999;">{d_tz}</span></td>
+                    <td style="width: 50%; vertical-align: top; text-align: right; border-left: 1px solid #eee; padding-left: 10px;"><b>ARRIVAL:</b><br><span style="font-size:13px; font-weight:bold;">{a_time}</span><br><span style="color:#666;">FBO: {a_fbo}</span><br><span style="font-size:10px; color:#999;">{a_tz}</span></td>
                 </tr>
             </table>
         </div>
-        <div style="background-color: #000; padding: 12px; text-align: center; font-size: 9px; color: #555; letter-spacing: 1px;">
-            VIP FLIGHT SUPPORT | OPERATIONAL UPDATE
+        <div style="background-color: #000; padding: 12px; text-align: center; font-size: 9px; color: #666; letter-spacing: 1px;">
+            FLIGHT SUPPORT OPERATIONS | VIP SERVICES
         </div>
     </div>
     """
 
-# --- 4. ACTION BUTTON ---
 if st.button("Generate VIP Newsletter"):
     if origin and destination:
         st.markdown("### 📧 Gmail Briefing Preview")
-        # Obtener los Emojis correspondientes de las claves seleccionadas
-        d_icon = WEATHER_ICONS.get(dep_wx_icon_key, "")
-        a_icon = WEATHER_ICONS.get(arr_wx_icon_key, "")
-        
-        newsletter = generate_newsletter_html(
-            milestone, origin, dep_city, dep_fbo, dep_time, dep_tz, 
-            destination, arr_city, arr_fbo, arr_time, arr_tz,
-            d_icon, dep_wx_msg, a_icon, arr_wx_msg
-        )
-        st.components.v1.html(newsletter, height=600)
-        st.info("💡 Highlight the card, copy it, and paste it into your Gmail thread.")
+        d_icon = WEATHER_ICONS.get(d_icon_key, "")
+        a_icon = WEATHER_ICONS.get(a_icon_key, "")
+        html = generate_newsletter_html(milestone, origin, dep_city, dep_fbo, dep_time, dep_tz, destination, arr_city, arr_fbo, arr_time, arr_tz, switches, d_icon, dep_wx_msg, a_icon, arr_wx_msg)
+        st.components.v1.html(html, height=700)
     else:
-        st.error("Please enter both Departure and Arrival ICAO.")
+        st.error("Please enter ICAO codes first.")
