@@ -118,7 +118,7 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_ica
     # Ramp Tag
     def r_tag(status):
         c = BRAND_COLOR if status == "Authorized" else "#999"
-        return f'<div style="font-size:8px; color:{c}; font-weight:800; margin-top:5px;">• PLANE-SIDE: {status}</div>'
+        return f'<div style="font-size:8px; color:{c}; font-weight:800; margin-top:5px;">• Plane-side vehicle access: {status}</div>'
 
     # Ensamblaje final
     header = f'<div style="background:{DARK_BAR}; padding:35px 20px; text-align:center;"><h2 style="color:#fff; margin:0; font-size:15px; letter-spacing:3px;">{m_stage.upper()}</h2></div>'
