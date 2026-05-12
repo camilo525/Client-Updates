@@ -56,4 +56,4 @@ with col1:
         st.caption(f"✅ **{dep_name}** | {dep_city}, {dep_state}")
     
     dep_time = st.text_input("Local Departure Time", placeholder="e.g. 10:00 AM")
-    st.caption(
+    st.caption()
