@@ -109,7 +109,7 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, a_icao, a_c
 
     def ramp_tag(status):
         color = BRAND_COLOR if status == "Authorized" else "#aaaaaa"
-        return f'<div style="font-size:9px; color:{color}; font-weight:800; margin-top:6px; text-transform:uppercase;">• Plane-side vehicle access: {status}</div>'
+        return f'<div style="font-size:8px; color:{color}; font-weight:800; margin-top:6px; text-transform:uppercase;">• Plane-side vehicle access: {status}</div>'
 
     msg_map = {
         "Trip Coordination": "Confirmation of trip details and operational feasibility.",
