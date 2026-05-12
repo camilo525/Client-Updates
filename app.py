@@ -87,37 +87,34 @@ if milestone == "Positioning Update":
         a_icon_key = st.selectbox("Arrival Icon", list(WEATHER_ICONS.keys()))
         arr_wx_msg = st.text_input("Arrival Brief", placeholder="e.g. Standard conditions...")
 
-# --- 4. ADDITIONAL SERVICES (NEW SECTION) ---
+# --- 4. ADDITIONAL SERVICES (UPDATED) ---
 st.markdown("---")
 st.subheader("➕ 4. Additional Services")
 col_s1, col_s2, col_s3 = st.columns(3)
 with col_s1:
-    s_pax = st.checkbox("Pax Names Received")
     s_catering = st.checkbox("Catering Ready")
 with col_s2:
-    s_ground = st.checkbox("Ground Transp.")
-    s_rental = st.checkbox("Rental Car")
+    s_ground = st.checkbox("Ground Transportation")
 with col_s3:
-    s_driver = st.checkbox("Chauffeur Service")
+    s_rental = st.checkbox("Rental Car")
 
 # --- 5. VIP NEWSLETTER GENERATOR ---
 def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_icao, a_city, a_fbo, a_time, a_tz, d_icon, d_msg, a_icon, a_msg, services):
     
     # Logic for Services Icons
-    # Format: (Icon, Active_Status)
+    # Icons: Catering (🍽️), Ground Transportation (👨‍✈️), Rental Car (🚗)
     svc_list = [
-        ("👤", services['pax']),
         ("🍽️", services['catering']),
-        ("🚘", services['ground']),
-        ("🔑", services['rental']),
-        ("👨‍✈️", services['driver'])
+        ("👨‍✈️", services['ground']),
+        ("🚗", services['rental'])
     ]
     
-    svc_html = "<div style='margin-top:20px; text-align:center;'>"
+    svc_html = "<div style='margin-top:15px; text-align:center;'>"
     for icon, is_active in svc_list:
-        color = "#00d4ff" if is_active else "#e0e0e033" # Brilla o se vuelve transparente
-        opacity = "1" if is_active else "0.3"
-        svc_html += f"<span style='font-size:24px; margin:0 10px; color:{color}; opacity:{opacity};'>{icon}</span>"
+        # If active, bright blue. If not, very faded gray
+        color = "#00d4ff" if is_active else "#cccccc"
+        opacity = "1" if is_active else "0.15"
+        svc_html += f"<span style='font-size:28px; margin:0 20px; color:{color}; opacity:{opacity};'>{icon}</span>"
     svc_html += "</div>"
 
     if m_stage == "Trip Confirmation":
@@ -155,7 +152,7 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_ica
             <p style="font-size: 14px; line-height: 1.6; color: #444;">{msg}</p>
             {wx_display}
             <div style="border-top:1px solid #eee; margin-top:20px; padding-top:10px;">
-                <b style="font-size:10px; color:#888; letter-spacing:1px;">ADDITIONAL SERVICES</b>
+                <div style="text-align:center; font-size:10px; color:#888; letter-spacing:1px; margin-bottom:10px;">ADDITIONAL SERVICES</div>
                 {svc_html}
             </div>
             <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
@@ -188,8 +185,9 @@ if st.button("Generate VIP Newsletter"):
         a_icon = WEATHER_ICONS.get(a_icon_key, "")
         
         services_status = {
-            'pax': s_pax, 'catering': s_catering, 
-            'ground': s_ground, 'rental': s_rental, 'driver': s_driver
+            'catering': s_catering, 
+            'ground': s_ground, 
+            'rental': s_rental
         }
         
         newsletter = generate_newsletter_html(
