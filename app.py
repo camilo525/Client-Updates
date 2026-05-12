@@ -147,3 +147,4 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_ica
                         <div style="color: {BRAND_COLOR}; font-weight: bold; font-size: 9px; text-transform: uppercase;">Departure</div>
                         <b style="font-size: 15px; color: #000;">{d_time}</b><br>
                         <div
+    
