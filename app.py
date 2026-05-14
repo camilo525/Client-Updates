@@ -78,7 +78,7 @@ with cs1:
     s_pets = st.checkbox("Pets")
     s_catering = st.checkbox("Catering")
 with cs2: 
-    s_ground = st.checkbox("Ground Transportation")
+    s_ground = st.checkbox("Transportation")
     s_rental = st.checkbox("Rental Car")
 with cs3:
     s_assist = st.checkbox("Special Assistance")
