@@ -98,7 +98,7 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_ica
 
     # Servicios
     svc_items = ""
-    for label, active in [("PETS", services['pets']), ("CATERING", services['catering']), ("GROUND", services['ground']), ("RENTAL", services['rental']), ("ASST", services['assist'])]:
+    for label, active in [("PETS", services['pets']), ("CATERING", services['catering']), ("TRANSPORTATION", services['transportation']), ("RENTAL", services['rental']), ("ASST", services['assist'])]:
         txt_c = BRAND_COLOR if active else "#bbbbbb"
         bg_c = "#fff5f6" if active else "#f5f5f5"
         svc_items += f'<div style="display:inline-block; margin:4px; width:85px; padding:10px 0; border-radius:8px; background:{bg_c}; border:1px solid {txt_c}; text-align:center;"><div style="font-size:16px; color:{txt_c};">◈</div><div style="font-size:8px; color:{txt_c}; font-weight:bold;">{label}</div></div>'
