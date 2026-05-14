@@ -83,12 +83,11 @@ with cs2:
 with cs3:
     s_assist = st.checkbox("Special Assistance")
 
-# --- 4. GENERATOR (SEGMENTED FOR SAFETY) ---
+# --- 4. GENERATOR ---
 def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_icao, a_city, a_fbo, a_time, a_tz, d_icon, d_msg, a_icon, a_msg, services, r_dep, r_arr):
     BRAND_COLOR = "#cb2d42"
     DARK_BAR = "#282522"
     
-    # Mensajes
     msg_map = {
         "Trip Coordination": "Hello, ____________. We have updated the flight details accordingly. Please find attached the revised trip sheet for your review, reflecting the latest confirmed information.",
         "Repositioning Update": "The aircraft is currently in its repositioning phase. We will provide an update once the aircraft is in position and ready to welcome you on board. <b>We would appreciate it if you could notify us when you are approximately 15 minutes away from the airport, enabling our crew to prepare for your timely departure.</b>.",
@@ -96,14 +95,13 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_ica
         "Departure & Enroute Monitoring": "We noticed you are ready to depart, and our team will continue monitoring the flight’s progress through active flight following. The Estimated Time Enroute is: <b>XX hrs XX mins</b>."
     }
 
-    # Servicios
+    # Updated logic: label for s_ground changed to "TRANSPORTATION"
     svc_items = ""
-    for label, active in [("PETS", services['pets']), ("CATERING", services['catering']), ("GROUND", services['ground']), ("RENTAL", services['rental']), ("ASST", services['assist'])]:
+    for label, active in [("PETS", services['pets']), ("CATERING", services['catering']), ("TRANSPORTATION", services['ground']), ("RENTAL", services['rental']), ("ASST", services['assist'])]:
         txt_c = BRAND_COLOR if active else "#bbbbbb"
         bg_c = "#fff5f6" if active else "#f5f5f5"
         svc_items += f'<div style="display:inline-block; margin:4px; width:85px; padding:10px 0; border-radius:8px; background:{bg_c}; border:1px solid {txt_c}; text-align:center;"><div style="font-size:16px; color:{txt_c};">◈</div><div style="font-size:8px; color:{txt_c}; font-weight:bold;">{label}</div></div>'
 
-    # Clima
     wx_html = ""
     if m_stage != "Trip Confirmation":
         wx_html = f"""<div style="margin-top:20px; display:table; width:100%;">
@@ -115,12 +113,10 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_ica
                 <span style="font-size:20px; color:{BRAND_COLOR};">{a_icon}</span><br><b style="font-size:10px; color:#999;">ARR WX</b><br><span style="font-size:12px;">{a_msg if a_msg else "Visual"}</span>
             </div></div>"""
 
-    # Ramp Tag
     def r_tag(status):
         c = BRAND_COLOR if status == "Authorized" else "#999"
         return f'<div style="font-size:8px; color:{c}; font-weight:800; margin-top:5px;">• Plane-side vehicle access: {status}</div>'
 
-    # Ensamblaje final
     header = f'<div style="background:{DARK_BAR}; padding:35px 20px; text-align:center;"><h2 style="color:#fff; margin:0; font-size:15px; letter-spacing:3px;">{m_stage.upper()}</h2></div>'
     body = f"""<div style="padding:35px; color:#333;">
         <div style="text-align:center; margin-bottom:30px; background:#f9f9f9; padding:25px; border-radius:12px;">
