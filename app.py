@@ -150,7 +150,7 @@ if st.button("Generate Executive Report"):
     if origin and destination:
         d_icon = WEATHER_ICONS.get(d_icon_key, "")
         a_icon = WEATHER_ICONS.get(a_icon_key, "")
-        status = {'pets': s_pets, 'catering': s_catering, 'ground': s_ground, 'rental': s_rental, 'assist': s_assist}
+        status = {'pets': s_pets, 'catering': s_catering, 'ground': s_transportation, 'rental': s_rental, 'assist': s_assist}
         newsletter = generate_newsletter_html(milestone, origin, dep_city, dep_fbo, dep_time, dep_tz, destination, arr_city, arr_fbo, arr_time, arr_tz, d_icon, dep_wx_msg, a_icon, arr_wx_msg, status, ramp_dep, ramp_arr)
         st.components.v1.html(newsletter, height=1000)
     else:
