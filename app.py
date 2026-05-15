@@ -71,7 +71,7 @@ def get_airport_details(icao):
 WEATHER_ICONS = {"Sunny": "☼", "Partly Cloudy": "☁", "Cloudy": "☁", "Rainy": "☂", "Thunderstorm": "⚡", "Snowy": "❄", "Foggy": "░"}
 
 # --- 1. ITINERARY INPUTS ---
-st.subheader("📍 Flight Itinerary")
+st.subheader("Trip Details")
 col1, col2 = st.columns(2)
 
 with col1:
