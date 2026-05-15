@@ -33,7 +33,7 @@ with col_l2:
     st.image("https://thrust-aviation.com/wp-content/uploads/2024/02/Logo-White-500-2-e1710003051285.png", width=200)
 
 # El título centrado debajo
-st.markdown('<div class="main-title">Client Communications Newsletter</div>', unsafe_allow_html=True)
+st.markdown('<div class="main-title">Newsletter Scripts</div>', unsafe_allow_html=True)
 
 # --- FUNCIÓN DE BÚSQUEDA DINÁMICA (API) ---
 def get_airport_details(icao):
