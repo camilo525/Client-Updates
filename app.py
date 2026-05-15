@@ -104,14 +104,23 @@ def generate_newsletter_html(m_stage, d_icao, d_city, d_fbo, d_time, d_tz, a_ica
 
     wx_html = ""
     if m_stage != "Trip Confirmation":
-        wx_html = f"""<div style="margin-top:20px; display:table; width:100%;">
-            <div style="display:table-cell; width:48%; padding:15px; background:#fcfcfc; border:1px solid #eee; border-top:3px solid {BRAND_COLOR};">
-                <span style="font-size:20px; color:{BRAND_COLOR};">{d_icon}</span><br><b style="font-size:10px; color:#999;">DEP WX</b><br><span style="font-size:12px;">{d_msg if d_msg else "Visual"}</span>
-            </div>
-            <div style="display:table-cell; width:4%;"></div>
-            <div style="display:table-cell; width:48%; padding:15px; background:#fcfcfc; border:1px solid #eee; border-top:3px solid {BRAND_COLOR};">
-                <span style="font-size:20px; color:{BRAND_COLOR};">{a_icon}</span><br><b style="font-size:10px; color:#999;">ARR WX</b><br><span style="font-size:12px;">{a_msg if a_msg else "Visual"}</span>
-            </div></div>"""
+        wx_html = f"""
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-top:20px; border-collapse: collapse;">
+            <tr>
+                <td width="48%" align="center" valign="top" style="padding:15px; background-color:#fcfcfc; border:1px solid #eee; border-top:3px solid {BRAND_COLOR};">
+                    <span style="font-size:24px; color:{BRAND_COLOR}; line-height:1;">{d_icon}</span><br>
+                    <b style="font-size:10px; color:#999; text-transform:uppercase; letter-spacing:1px;">DEP WX</b><br>
+                    <div style="font-size:12px; color:#333; margin-top:5px;">{d_msg if d_msg else "Visual"}</div>
+                </td>
+                <td width="4%">&nbsp;</td>
+                <td width="48%" align="center" valign="top" style="padding:15px; background-color:#fcfcfc; border:1px solid #eee; border-top:3px solid {BRAND_COLOR};">
+                    <span style="font-size:24px; color:{BRAND_COLOR}; line-height:1;">{a_icon}</span><br>
+                    <b style="font-size:10px; color:#999; text-transform:uppercase; letter-spacing:1px;">ARR WX</b><br>
+                    <div style="font-size:12px; color:#333; margin-top:5px;">{a_msg if a_msg else "Visual"}</div>
+                </td>
+            </tr>
+        </table>
+        """
 
     def r_tag(status):
         c = BRAND_COLOR if status == "Authorized" else "#999"
