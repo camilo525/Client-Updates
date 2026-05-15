@@ -27,16 +27,25 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# --- LOGO SUPERIOR CENTRADO ---
-# Creamos tres columnas; la del medio (col2) contendrá el logo
-col_l1, col_l2, col_l3 = st.columns([1, 2, 1]) 
-
-with col_l2:
-    st.image("https://thrust-aviation.com/wp-content/uploads/2024/02/Logo-White-500-2-e1710003051285.png", width=200)
-
-# El título centrado debajo
-st.markdown('<div class="main-title">Newsletter Scripts</div>', unsafe_allow_html=True)
-
+# --- ENCABEZADO SUPERIOR (LOGO Y TÍTULO PERFECTAMENTE CENTRADOS) ---
+st.markdown("""
+    <div style="text-align: center; width: 100%; margin-bottom: 20px;">
+        <img src="https://thrust-aviation.com/wp-content/uploads/2024/02/Logo-White-500-2-e1710003051285.png" 
+             style="width: 200px; margin-bottom: 10px;">
+        <div style="
+            font-size: 32px; 
+            font-weight: bold;
+            background: -webkit-linear-gradient(#cb2d42, #8e1e2d);
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+            display: block;
+            width: 100%;
+            text-align: center;">
+            Client Communications Newsletter
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 # --- FUNCIÓN DE BÚSQUEDA DINÁMICA (API) ---
 def get_airport_details(icao):
     """Obtiene detalles del aeropuerto vía API CheckWX en tiempo real"""
