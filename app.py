@@ -16,7 +16,9 @@ st.markdown("""
         background: -webkit-linear-gradient(#cb2d42, #8e1e2d);
         -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         text-align: center; margin-bottom: 30px; letter-spacing: 2px;
-    }
+    width: 100%; /* AÑADE ESTO para forzar que ocupe todo el ancho */
+    display: block; /* AÑADE ESTO */
+}
     div[data-baseweb="input"], div[data-baseweb="textarea"], div[data-baseweb="select"], div[data-baseweb="checkbox"], div[data-baseweb="radio"] { 
         background-color: #111 !important; border: 1px solid #333 !important; 
     }
