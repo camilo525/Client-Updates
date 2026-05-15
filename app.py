@@ -30,7 +30,7 @@ with logo_col1:
     st.image("https://thrust-aviation.com/wp-content/uploads/2024/02/Logo-White-500-2-e1710003051285.png", width=200)
 
 # El título ahora va debajo o puedes integrarlo en la lógica
-st.markdown('<h1 style="color:#00d4ff; margin-top:-20px;">Operational Mission Assessment</h1>', unsafe_allow_html=True)
+st.markdown('<h1 style="color:#00d4ff; margin-top:-20px;">Flight Support Team</h1>', unsafe_allow_html=True)
 
 # --- AIRPORT DATABASE ---
 AIRPORT_DB = {
