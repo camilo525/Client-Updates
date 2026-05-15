@@ -25,11 +25,14 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# --- LOGO SUPERIOR IZQUIERDA ---
-logo_col1, logo_col2 = st.columns([1, 2]) 
-with logo_col1:
+# --- LOGO SUPERIOR CENTRADO ---
+# Creamos tres columnas; la del medio (col2) contendrá el logo
+col_l1, col_l2, col_l3 = st.columns([1, 2, 1]) 
+
+with col_l2:
     st.image("https://thrust-aviation.com/wp-content/uploads/2024/02/Logo-White-500-2-e1710003051285.png", width=200)
 
+# El título centrado debajo
 st.markdown('<div class="main-title">Client Communications Newsletter</div>', unsafe_allow_html=True)
 
 # --- FUNCIÓN DE BÚSQUEDA DINÁMICA (API) ---
