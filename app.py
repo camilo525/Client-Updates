@@ -62,11 +62,11 @@ def get_airport_details(icao):
             city = stn.get("city", "N/A")
             state = stn.get("state", "N/A")
             # Extraemos solo el ID de la zona horaria (ej: America/New_York)
-            tz = stn.get("timezone", {}).get("tzid", "Local")
+            tz = stn.get("timezone", {}).get("tzid", "Local time")
             return [name, city, state, tz]
     except:
         pass
-    return [icao, "Unknown City", "Unknown State", "Local"]
+    return [icao, "Unknown City", "Unknown State", "Local time"]
 
 WEATHER_ICONS = {"Sunny": "☼", "Partly Cloudy": "☁", "Cloudy": "☁", "Rainy": "☂", "Thunderstorm": "⚡", "Snowy": "❄", "Foggy": "░"}
 
